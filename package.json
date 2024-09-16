@@ -6,11 +6,16 @@
     "build": "refine build",
     "dev": "cross-env NODE_OPTIONS=--max_old_space_size=4096 refine dev",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
-    "start": "refine start"
+    "start": "refine start",
+    "studio": "prisma studio",
+    "generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "db:push": "prisma db push --skip-generate"
   },
   "dependencies": {
     "@ant-design/icons": "5.0.1",
     "@ant-design/nextjs-registry": "^1.0.0",
+    "@prisma/client": "5.19.1",
     "@refinedev/antd": "^5.43.1",
     "@refinedev/cli": "^2.16.38",
     "@refinedev/core": "^4.54.1",
@@ -34,6 +39,7 @@
     "@types/react-dom": "^18.0.0",
     "@typescript-eslint/parser": "5.48.0",
     "eslint": "^8.24.0",
+    "prisma": "^5.19.1",
     "typescript": "^5.4.2"
   },
   "engines": {
