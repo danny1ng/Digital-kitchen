@@ -1,6 +1,6 @@
 import { DevtoolsProvider } from "@providers/devtools";
 import { useNotificationProvider } from "@refinedev/antd";
-import { GitHubBanner, Refine } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import routerProvider from "@refinedev/nextjs-router";
 import type { Metadata } from "next";
@@ -9,7 +9,7 @@ import React, { Suspense } from "react";
 
 import { ColorModeContextProvider } from "@contexts/color-mode";
 import { authProvider } from "@providers/auth-provider";
-import { dataProvider } from "@providers/data-provider";
+import { dataProvider } from "@providers/rest-data-provider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@refinedev/antd/dist/reset.css";
 
@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   },
 };
 
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,13 +30,11 @@ export default function RootLayout({
 }>) {
   const cookieStore = cookies();
   const theme = cookieStore.get("theme");
-
   return (
     <html lang="en">
       <body>
         <Suspense>
           <AntdRegistry>
-            <GitHubBanner />
             <RefineKbarProvider>
               <ColorModeContextProvider defaultMode={theme?.value}>
                 <DevtoolsProvider>

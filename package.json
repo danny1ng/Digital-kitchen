@@ -24,11 +24,13 @@
     "@refinedev/nextjs-router": "^6.1.0",
     "@refinedev/simple-rest": "^5.0.8",
     "antd": "^5.17.0",
+    "axios": "1.6.2",
     "cross-env": "^7.0.3",
     "elysia": "^1.1.12",
     "js-cookie": "^3.0.1",
     "next": "^14.1.0",
     "nookies": "^2.5.2",
+    "query-string": "7.1.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
