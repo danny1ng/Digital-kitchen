@@ -15,7 +15,7 @@ const app = new Elysia({ prefix: "/api/auth" })
   )
   .post(
     "/sign-in",
-    async ({ body, jwt, cookie: { accessToken, refreshToken }, set }) => {
+    async ({ body, jwt, cookie: { accessToken }, set }) => {
       const user = await prisma.user.findUnique({
         where: { email: body.email },
         select: {
@@ -31,11 +31,10 @@ const app = new Elysia({ prefix: "/api/auth" })
           "The email address or password you entered is incorrect"
         );
       }
-      const matchPassword = await Bun.password.verify(
-        body.password,
-        user.password,
-        "bcrypt"
-      );
+      const matchPassword = await Bun.password
+        .verify(body.password, user.password)
+        .catch(console.log);
+
       if (!matchPassword) {
         set.status = "Bad Request";
         throw new Error(
@@ -55,7 +54,7 @@ const app = new Elysia({ prefix: "/api/auth" })
       });
 
       return {
-        message: "Sig-in successfully",
+        message: "Sign-in successfully",
         data: {
           user: {
             id: user.id,
@@ -71,14 +70,40 @@ const app = new Elysia({ prefix: "/api/auth" })
       }),
     }
   )
-  .post("/logout", async (c) => {
+  .post("/logout", async ({ cookie: { accessToken } }) => {
+    accessToken.remove();
     return {
       message: "Logout successfully",
     };
   })
-  .get("/me", (c) => {
+  .get("/me", async ({ jwt, cookie: { accessToken }, set }) => {
+    const token = await jwt.verify((accessToken.cookie.value as string) || "");
+
+    if (!token) {
+      set.status = "Unauthorized";
+      return { message: "Unauthorized" };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: (token as any)?.sub },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+
+    if (!user) {
+      set.status = "Unauthorized";
+      return { message: "Unauthorized" };
+    }
+
     return {
-      message: "Fetch current user",
+      data: {
+        user: {
+          id: user.id,
+          email: user.email,
+        },
+      },
     };
   });
 

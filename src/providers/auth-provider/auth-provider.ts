@@ -27,13 +27,20 @@ const mockUsers = [
 export const authProvider: AuthProvider = {
   login: async ({ email, username, password, remember }) => {
     // Suppose we actually send a request to the back end here.
-    const user = mockUsers.find((item) => item.email === email);
+    // const user = mockUsers.find((item) => item.email === email);
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/sign-in",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
+    const user = await res.json();
 
-    if (user) {
-      Cookies.set("auth", JSON.stringify(user), {
-        expires: 30, // 30 days
-        path: "/",
-      });
+    if (res.ok && user) {
       return {
         success: true,
         redirectTo: "/",
@@ -48,74 +55,67 @@ export const authProvider: AuthProvider = {
       },
     };
   },
-  register: async (params) => {
-    // Suppose we actually send a request to the back end here.
-    const user = mockUsers.find((item) => item.email === params.email);
+  // forgotPassword: async (params) => {
+  //   // Suppose we actually send a request to the back end here.
+  //   const user = mockUsers.find((item) => item.email === params.email);
 
-    if (user) {
-      Cookies.set("auth", JSON.stringify(user), {
-        expires: 30, // 30 days
-        path: "/",
-      });
-      return {
-        success: true,
-        redirectTo: "/",
-      };
-    }
-    return {
-      success: false,
-      error: {
-        message: "Register failed",
-        name: "Invalid email or password",
-      },
-    };
-  },
-  forgotPassword: async (params) => {
-    // Suppose we actually send a request to the back end here.
-    const user = mockUsers.find((item) => item.email === params.email);
+  //   if (user) {
+  //     //we can send email with reset password link here
+  //     return {
+  //       success: true,
+  //     };
+  //   }
+  //   return {
+  //     success: false,
+  //     error: {
+  //       message: "Forgot password failed",
+  //       name: "Invalid email",
+  //     },
+  //   };
+  // },
+  // updatePassword: async (params) => {
+  //   // Suppose we actually send a request to the back end here.
+  //   const isPasswordInvalid = params.password === "123456" || !params.password;
 
-    if (user) {
-      //we can send email with reset password link here
-      return {
-        success: true,
-      };
-    }
-    return {
-      success: false,
-      error: {
-        message: "Forgot password failed",
-        name: "Invalid email",
-      },
-    };
-  },
-  updatePassword: async (params) => {
-    // Suppose we actually send a request to the back end here.
-    const isPasswordInvalid = params.password === "123456" || !params.password;
+  //   if (isPasswordInvalid) {
+  //     return {
+  //       success: false,
+  //       error: {
+  //         message: "Update password failed",
+  //         name: "Invalid password",
+  //       },
+  //     };
+  //   }
 
-    if (isPasswordInvalid) {
-      return {
-        success: false,
-        error: {
-          message: "Update password failed",
-          name: "Invalid password",
-        },
-      };
-    }
-
-    return {
-      success: true,
-    };
-  },
+  //   return {
+  //     success: true,
+  //   };
+  // },
   logout: async () => {
-    Cookies.remove("auth", { path: "/" });
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/logout",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return {
       success: true,
       redirectTo: "/login",
     };
   },
   check: async () => {
-    const auth = Cookies.get("auth");
-    if (auth) {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const user = await res.json();
+
+    if (res.ok && user) {
       return {
         authenticated: true,
       };
@@ -128,19 +128,26 @@ export const authProvider: AuthProvider = {
     };
   },
   getPermissions: async () => {
-    const auth = Cookies.get("auth");
-    if (auth) {
-      const parsedUser = JSON.parse(auth);
-      return parsedUser.roles;
-    }
+    // const auth = Cookies.get("auth");
+    // if (auth) {
+    //   const parsedUser = JSON.parse(auth);
+    //   return parsedUser.roles;
+    // }
     return null;
   },
   getIdentity: async () => {
-    const auth = Cookies.get("auth");
-    if (auth) {
-      const parsedUser = JSON.parse(auth);
-      return parsedUser;
+    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const user = await res.json();
+
+    if (res.ok && user) {
+      return user;
     }
+
     return null;
   },
   onError: async (error) => {
