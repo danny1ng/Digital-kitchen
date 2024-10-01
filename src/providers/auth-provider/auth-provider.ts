@@ -1,33 +1,10 @@
 "use client";
 
 import type { AuthProvider } from "@refinedev/core";
-import Cookies from "js-cookie";
-
-const mockUsers = [
-  {
-    email: "admin@refine.dev",
-    name: "John Doe",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    roles: ["admin"],
-  },
-  {
-    email: "editor@refine.dev",
-    name: "Jane Doe",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    roles: ["editor"],
-  },
-  {
-    email: "demo@refine.dev",
-    name: "Jane Doe",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    roles: ["user"],
-  },
-];
 
 export const authProvider: AuthProvider = {
   login: async ({ email, username, password, remember }) => {
     // Suppose we actually send a request to the back end here.
-    // const user = mockUsers.find((item) => item.email === email);
     const res = await fetch(
       process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/sign-in",
       {
