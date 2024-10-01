@@ -84,7 +84,7 @@ export const authProvider: AuthProvider = {
     };
   },
   check: async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/me", {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/user/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const authProvider: AuthProvider = {
     return null;
   },
   getIdentity: async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/me", {
+    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/user/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

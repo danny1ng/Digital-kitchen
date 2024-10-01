@@ -17,7 +17,7 @@ export const authProviderServer: Pick<AuthProvider, "check"> = {
     }
 
     const { data } = await axios(
-      process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/me",
+      process.env.NEXT_PUBLIC_API_BASE_URL + "/user/me",
       {
         headers: {
           "Content-Type": "application/json",

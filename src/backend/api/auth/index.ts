@@ -1,12 +1,10 @@
-import { Elysia, t } from "elysia";
-import { PrismaClient } from "@prisma/client";
+import Elysia, { t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { getExpTimestamp } from "@lib/get-exp-timestamp";
 import { ACCESS_TOKEN_EXP } from "@constants";
+import prisma from "@backend/lib/prisma";
 
-const prisma = new PrismaClient();
-
-const app = new Elysia({ prefix: "/api/auth" })
+export const authRoute = new Elysia({ prefix: "/auth" })
   .use(
     jwt({
       name: "jwt",
@@ -75,37 +73,4 @@ const app = new Elysia({ prefix: "/api/auth" })
     return {
       message: "Logout successfully",
     };
-  })
-  .get("/me", async ({ jwt, cookie: { accessToken }, set }) => {
-    const token = await jwt.verify((accessToken.cookie.value as string) || "");
-
-    if (!token) {
-      set.status = "Unauthorized";
-      return { message: "Unauthorized" };
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: (token as any)?.sub },
-      select: {
-        id: true,
-        email: true,
-      },
-    });
-
-    if (!user) {
-      set.status = "Unauthorized";
-      return { message: "Unauthorized" };
-    }
-
-    return {
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-        },
-      },
-    };
   });
-
-export const GET = app.handle;
-export const POST = app.handle;
