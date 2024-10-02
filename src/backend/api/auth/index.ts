@@ -1,16 +1,11 @@
 import Elysia, { t } from "elysia";
-import { jwt } from "@elysiajs/jwt";
 import { getExpTimestamp } from "@lib/get-exp-timestamp";
 import { ACCESS_TOKEN_EXP } from "@constants";
 import prisma from "@backend/lib/prisma";
+import { jwtSetup } from "./jwt";
 
 export const authRoute = new Elysia({ prefix: "/auth" })
-  .use(
-    jwt({
-      name: "jwt",
-      secret: process.env.JWT_SECRET || "secret1234321222",
-    })
-  )
+  .use(jwtSetup)
   .post(
     "/sign-in",
     async ({ body, jwt, cookie: { accessToken }, set }) => {

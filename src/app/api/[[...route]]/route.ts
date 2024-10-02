@@ -1,12 +1,16 @@
 import { authRoute } from "@backend/api/auth";
 import { createElysia } from "@backend/api/elysia";
+import { eventsRoute } from "@backend/api/events";
 import { userRoute } from "@backend/api/user";
 
 /**
  * Main API router
  * Combines auth and user routes under the '/api' prefix
  */
-const app = createElysia({ prefix: "/api" }).use(authRoute).use(userRoute);
+const app = createElysia({ prefix: "/api" })
+  .use(authRoute)
+  .use(userRoute)
+  .use(eventsRoute);
 
 /**
  * Export the app type for use with RPC clients (e.g., edenTreaty)
