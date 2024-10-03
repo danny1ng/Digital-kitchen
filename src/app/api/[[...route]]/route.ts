@@ -2,12 +2,19 @@ import { authRoute } from "@backend/api/auth";
 import { createElysia } from "@backend/api/elysia";
 import { eventsRoute } from "@backend/api/events";
 import { userRoute } from "@backend/api/user";
+import { cron } from "@elysiajs/cron";
+import { logger } from "@bogeychan/elysia-logger";
 
 /**
  * Main API router
  * Combines auth and user routes under the '/api' prefix
  */
 const app = createElysia({ prefix: "/api" })
+  .use(
+    logger({
+      autoLogging: true,
+    })
+  )
   .use(authRoute)
   .use(userRoute)
   .use(eventsRoute);

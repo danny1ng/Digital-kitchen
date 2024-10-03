@@ -5,10 +5,7 @@ import { jwtSetup } from "./jwt";
 
 export const isAuthenticated = new Elysia({ name: "jwt-auth" })
   .use(jwtSetup)
-  .guard({
-    as: "scoped",
-  })
-  .derive({ as: "scoped" }, async ({ error, cookie: { accessToken }, jwt }) => {
+  .derive(async ({ error, cookie: { accessToken }, jwt }) => {
     const token = await jwt.verify((accessToken.cookie.value as string) || "");
 
     if (!token) {
@@ -32,4 +29,5 @@ export const isAuthenticated = new Elysia({ name: "jwt-auth" })
     }
 
     return { user };
-  });
+  })
+  .as("plugin");

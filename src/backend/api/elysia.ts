@@ -6,6 +6,7 @@
  * tl;dr - this is where all the Elysia server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { ElysiaConfig } from "elysia";
 import Elysia from "elysia";
 
@@ -35,7 +36,7 @@ import Elysia from "elysia";
  * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
  * network latency that would occur in production but not in local development.
  */
-const timmingMiddleware = new Elysia()
+const timingMiddleware = new Elysia()
   .state({ start: 0 })
   .onBeforeHandle(({ store }) => (store.start = Date.now()))
   .onAfterHandle(({ path, store: { start } }) =>
@@ -54,5 +55,31 @@ export const createElysia = <P extends string, S extends boolean>(
   new Elysia({
     ...options,
   })
-    // .use(createContext)
-    .use(timmingMiddleware);
+    .onError(({ error, set }) => {
+      const prismaError = error as PrismaClientKnownRequestError;
+      if (!(error as any).type) {
+        switch (prismaError.code) {
+          case "P2002":
+            // handling duplicate key errors
+            set.status = 400;
+            return {
+              message: `${prismaError?.meta?.target}: field value already exists. Please enter a unique value.`,
+            };
+          case "P2014":
+            // handling invalid id errors
+            set.status = 400;
+            return { message: `Invalid ID: ${prismaError?.meta?.target}` };
+          case "P2003":
+            // handling invalid data errors
+            set.status = 400;
+            return {
+              message: `Invalid input data: ${prismaError?.meta?.target}`,
+            };
+          default:
+            // handling all other errors
+            return { message: `Something went wrong: ${prismaError.message}` };
+        }
+      }
+      return JSON.parse(error.message);
+    })
+    .use(timingMiddleware);

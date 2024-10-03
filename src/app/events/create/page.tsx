@@ -1,7 +1,7 @@
 "use client";
 
 import { Create, useForm, useSelect } from "@refinedev/antd";
-import { Form, Input, Select } from "antd";
+import { Flex, Form, Input, Select, DatePicker, TimePicker } from "antd";
 
 export default function BlogPostCreate() {
   const { formProps, saveButtonProps } = useForm({});
@@ -15,7 +15,7 @@ export default function BlogPostCreate() {
       <Form {...formProps} layout="vertical">
         <Form.Item
           label={"Title"}
-          name={["title"]}
+          name={["title3"]}
           rules={[
             {
               required: true,
@@ -25,8 +25,8 @@ export default function BlogPostCreate() {
           <Input />
         </Form.Item>
         <Form.Item
-          label={"Content"}
-          name="content"
+          label={"Description"}
+          name="description"
           rules={[
             {
               required: true,
@@ -35,36 +35,40 @@ export default function BlogPostCreate() {
         >
           <Input.TextArea rows={5} />
         </Form.Item>
-        <Form.Item
-          label={"Category"}
-          name={["category", "id"]}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select {...categorySelectProps} />
-        </Form.Item>
-        <Form.Item
-          label={"Status"}
-          name={["status"]}
-          initialValue={"draft"}
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            defaultValue={"draft"}
-            options={[
-              { value: "draft", label: "Draft" },
-              { value: "published", label: "Published" },
-              { value: "rejected", label: "Rejected" },
+        <Flex gap={24}>
+          <Form.Item
+            label={"Date"}
+            name={["date"]}
+            rules={[
+              {
+                required: true,
+              },
             ]}
-            style={{ width: 120 }}
-          />
+          >
+            <DatePicker />
+          </Form.Item>
+          <Form.Item
+            label={"Time"}
+            name={["time"]}
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+          >
+            <TimePicker format="HH:mm" />
+          </Form.Item>
+        </Flex>
+        <Form.Item
+          label={"Restaurant"}
+          name={["restaurantIds"]}
+          rules={[
+            {
+              required: false,
+            },
+          ]}
+        >
+          <Select mode="multiple" {...categorySelectProps} />
         </Form.Item>
       </Form>
     </Create>
