@@ -1,13 +1,13 @@
 "use client";
 
-import { Edit, useForm } from "@refinedev/antd";
+import { Create, useForm } from "@refinedev/antd";
 import { Form, Input } from "antd";
 
-export default function CategoryEdit() {
+export default function RestaurantCreate() {
   const { formProps, saveButtonProps } = useForm({});
 
   return (
-    <Edit saveButtonProps={saveButtonProps}>
+    <Create saveButtonProps={saveButtonProps}>
       <Form {...formProps} layout="vertical">
         <Form.Item
           label={"Title"}
@@ -21,6 +21,6 @@ export default function CategoryEdit() {
           <Input />
         </Form.Item>
       </Form>
-    </Edit>
+    </Create>
   );
 }

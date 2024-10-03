@@ -6,7 +6,7 @@ import { Typography } from "antd";
 
 const { Title } = Typography;
 
-export default function CategoryShow() {
+export default function RestaurantShow() {
   const { query: queryResult } = useShow({});
   const { data, isLoading } = queryResult;
 

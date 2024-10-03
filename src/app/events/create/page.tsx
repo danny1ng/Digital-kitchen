@@ -3,7 +3,7 @@
 import { Create, useForm, useSelect } from "@refinedev/antd";
 import { Flex, Form, Input, Select, DatePicker, TimePicker } from "antd";
 
-export default function BlogPostCreate() {
+export default function EventCreate() {
   const { formProps, saveButtonProps } = useForm({});
 
   const { selectProps: categorySelectProps } = useSelect({
@@ -15,7 +15,7 @@ export default function BlogPostCreate() {
       <Form {...formProps} layout="vertical">
         <Form.Item
           label={"Title"}
-          name={["title3"]}
+          name={["title"]}
           rules={[
             {
               required: true,

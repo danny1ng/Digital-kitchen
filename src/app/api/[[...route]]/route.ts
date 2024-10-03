@@ -4,6 +4,7 @@ import { eventsRoute } from "@backend/api/events";
 import { userRoute } from "@backend/api/user";
 import { cron } from "@elysiajs/cron";
 import { logger } from "@bogeychan/elysia-logger";
+import { restaurantsRoute } from "@backend/api/restaurants";
 
 /**
  * Main API router
@@ -17,7 +18,8 @@ const app = createElysia({ prefix: "/api" })
   )
   .use(authRoute)
   .use(userRoute)
-  .use(eventsRoute);
+  .use(eventsRoute)
+  .use(restaurantsRoute);
 
 /**
  * Export the app type for use with RPC clients (e.g., edenTreaty)

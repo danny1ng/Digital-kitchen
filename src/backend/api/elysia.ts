@@ -54,32 +54,30 @@ export const createElysia = <P extends string, S extends boolean>(
 ) =>
   new Elysia({
     ...options,
-  })
-    .onError(({ error, set }) => {
-      const prismaError = error as PrismaClientKnownRequestError;
-      if (!(error as any).type) {
-        switch (prismaError.code) {
-          case "P2002":
-            // handling duplicate key errors
-            set.status = 400;
-            return {
-              message: `${prismaError?.meta?.target}: field value already exists. Please enter a unique value.`,
-            };
-          case "P2014":
-            // handling invalid id errors
-            set.status = 400;
-            return { message: `Invalid ID: ${prismaError?.meta?.target}` };
-          case "P2003":
-            // handling invalid data errors
-            set.status = 400;
-            return {
-              message: `Invalid input data: ${prismaError?.meta?.target}`,
-            };
-          default:
-            // handling all other errors
-            return { message: `Something went wrong: ${prismaError.message}` };
-        }
+  }).onError(({ error, set }) => {
+    const prismaError = error as PrismaClientKnownRequestError;
+    if (!(error as any).type) {
+      switch (prismaError.code) {
+        case "P2002":
+          // handling duplicate key errors
+          set.status = 400;
+          return {
+            message: `${prismaError?.meta?.target}: field value already exists. Please enter a unique value.`,
+          };
+        case "P2014":
+          // handling invalid id errors
+          set.status = 400;
+          return { message: `Invalid ID: ${prismaError?.meta?.target}` };
+        case "P2003":
+          // handling invalid data errors
+          set.status = 400;
+          return {
+            message: `Invalid input data: ${prismaError?.meta?.target}`,
+          };
+        default:
+          // handling all other errors
+          return { message: `Something went wrong: ${prismaError.message}` };
       }
-      return JSON.parse(error.message);
-    })
-    .use(timingMiddleware);
+    }
+    return JSON.parse(error.message);
+  });

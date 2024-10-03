@@ -53,11 +53,11 @@ export default function RootLayout({
                         },
                       },
                       {
-                        name: "categories",
-                        list: "/categories",
-                        create: "/categories/create",
-                        edit: "/categories/edit/:id",
-                        show: "/categories/show/:id",
+                        name: "restaurants",
+                        list: "/restaurants",
+                        create: "/restaurants/create",
+                        edit: "/restaurants/edit/:id",
+                        show: "/restaurants/show/:id",
                         meta: {
                           canDelete: true,
                         },

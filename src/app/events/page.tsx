@@ -12,7 +12,7 @@ import {
 import { type BaseRecord, useMany } from "@refinedev/core";
 import { Space, Table } from "antd";
 
-export default function BlogPostList() {
+export default function EventsList() {
   const { tableProps } = useTable({
     syncWithLocation: true,
   });

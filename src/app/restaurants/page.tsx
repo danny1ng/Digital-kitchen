@@ -10,7 +10,7 @@ import {
 import type { BaseRecord } from "@refinedev/core";
 import { Space, Table } from "antd";
 
-export default function CategoryList() {
+export default function RestaurantList() {
   const { tableProps } = useTable({
     syncWithLocation: true,
   });

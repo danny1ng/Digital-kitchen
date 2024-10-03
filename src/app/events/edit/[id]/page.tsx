@@ -3,7 +3,7 @@
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 import { Form, Input, Select } from "antd";
 
-export default function BlogPostEdit() {
+export default function RestaurantEdit() {
   const { formProps, saveButtonProps, query: queryResult } = useForm({});
 
   const blogPostsData = queryResult?.data?.data;
