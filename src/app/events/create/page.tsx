@@ -6,8 +6,8 @@ import { Flex, Form, Input, Select, DatePicker, TimePicker } from "antd";
 export default function EventCreate() {
   const { formProps, saveButtonProps } = useForm({});
 
-  const { selectProps: categorySelectProps } = useSelect({
-    resource: "categories",
+  const { selectProps: restaurantSelectProps } = useSelect({
+    resource: "restaurants",
   });
 
   return (
@@ -68,7 +68,7 @@ export default function EventCreate() {
             },
           ]}
         >
-          <Select mode="multiple" {...categorySelectProps} />
+          <Select mode="multiple" {...restaurantSelectProps} />
         </Form.Item>
       </Form>
     </Create>

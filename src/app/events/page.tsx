@@ -18,7 +18,7 @@ export default function EventsList() {
   });
 
   const { data: categoryData, isLoading: categoryIsLoading } = useMany({
-    resource: "categories",
+    resource: "restaurants",
     ids:
       tableProps?.dataSource
         ?.map((item) => item?.category?.id)

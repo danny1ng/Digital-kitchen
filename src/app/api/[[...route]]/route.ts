@@ -5,11 +5,13 @@ import { userRoute } from "@backend/api/user";
 import { cron } from "@elysiajs/cron";
 import { logger } from "@bogeychan/elysia-logger";
 import { restaurantsRoute } from "@backend/api/restaurants";
+import { fetchKitchenRoute } from "@backend/api/fetch-kitchen";
 
 /**
  * Main API router
  * Combines auth and user routes under the '/api' prefix
  */
+
 const app = createElysia({ prefix: "/api" })
   .use(
     logger({
@@ -19,7 +21,8 @@ const app = createElysia({ prefix: "/api" })
   .use(authRoute)
   .use(userRoute)
   .use(eventsRoute)
-  .use(restaurantsRoute);
+  .use(restaurantsRoute)
+  .use(fetchKitchenRoute);
 
 /**
  * Export the app type for use with RPC clients (e.g., edenTreaty)

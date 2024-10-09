@@ -15,6 +15,8 @@ export default function RestaurantList() {
     syncWithLocation: true,
   });
 
+  console.log("🚀 ~ RestaurantList ~ tableProps:", tableProps);
+
   return (
     <List>
       <Table {...tableProps} rowKey="id">
