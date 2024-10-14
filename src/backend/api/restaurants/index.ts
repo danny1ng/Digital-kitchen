@@ -5,11 +5,37 @@ import { isAuthenticated } from "../auth/is-authenticated";
 
 export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
   .use(isAuthenticated)
-  .get("/", async ({ error }) => {
-    const restaurants = await prisma.restaurant.findMany();
+  .get(
+    "/",
+    async ({ query: { name_like, id } }) => {
+      const restaurants = await prisma.restaurant.findMany({
+        where: { id, name: { contains: name_like, mode: "insensitive" } },
+      });
 
-    return restaurants;
-  })
+      return restaurants;
+    },
+    {
+      query: t.Object({
+        id: t.Optional(t.String()),
+        name_like: t.Optional(t.String()),
+      }),
+    }
+  )
+  .get(
+    "/:id",
+    async ({ params: { id } }) => {
+      const restaurant = await prisma.restaurant.findUnique({
+        where: { id },
+      });
+
+      return restaurant;
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
   .post(
     "/",
     async ({ body: { ...data } }) => {

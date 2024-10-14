@@ -1,5 +1,6 @@
 "use client";
 
+import { Restaurant } from "@prisma/client";
 import { Create, useForm, useSelect } from "@refinedev/antd";
 import { Flex, Form, Input, Select, DatePicker, TimePicker } from "antd";
 
