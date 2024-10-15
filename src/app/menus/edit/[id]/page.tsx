@@ -7,7 +7,7 @@ import { DatePicker, Flex, Form, Input, Select, TimePicker } from "antd";
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
-export default function RestaurantEdit() {
+export default function MenuEdit() {
   const {
     formProps,
     saveButtonProps,
@@ -30,7 +30,6 @@ export default function RestaurantEdit() {
           name={["title"]}
           rules={[
             {
-              whitespace: true,
               required: true,
             },
           ]}
@@ -42,7 +41,6 @@ export default function RestaurantEdit() {
           name="description"
           rules={[
             {
-              whitespace: true,
               required: true,
             },
           ]}
@@ -60,7 +58,6 @@ export default function RestaurantEdit() {
             }}
             rules={[
               {
-                whitespace: true,
                 required: true,
               },
             ]}

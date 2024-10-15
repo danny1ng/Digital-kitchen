@@ -47,4 +47,38 @@ model Restaurant {
   toastToken             String?
   toastManagementSetGuid String?
   events                 Event[]
+  menu                   Menu[]
+}
+
+model Menu {
+  id           Int         @id @default(autoincrement())
+  name         String
+  position     Int
+  items        MenuGroup[]
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId String?
+}
+
+model MenuGroup {
+  id     Int        @id @default(autoincrement())
+  name   String
+  menuId Int
+  menu   Menu       @relation(fields: [menuId], references: [id])
+  items  MenuItem[]
+}
+
+model MenuItem {
+  id              Int       @id @default(autoincrement())
+  name            String
+  description     String?
+  image           String?
+  calories        Int?
+  basePrice       Float?
+  maxPrice        Float?
+  minPrice        Float?
+  inheritPricing  Boolean
+  pricingStrategy String?
+  imageToast      String?
+  menuGroupId     Int
+  menuGroup       MenuGroup @relation(fields: [menuGroupId], references: [id])
 }

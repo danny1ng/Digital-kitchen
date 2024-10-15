@@ -6,13 +6,6 @@ import { Event, Prisma, Restaurant } from "@prisma/client";
 import { ToastService } from "@backend/services/fetch-toast-tab-kitchen/toast-service";
 import { message } from "antd";
 
-interface IRestaurantData {
-  restaurantId: number;
-  restaurantGuid: string;
-  toastToken: string;
-  toastManagementSetGuid: string;
-}
-
 export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
   .use(isAuthenticated)
   .post(

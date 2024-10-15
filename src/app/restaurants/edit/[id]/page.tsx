@@ -14,6 +14,7 @@ export default function RestaurantEdit() {
           name={["name"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}
@@ -26,6 +27,7 @@ export default function RestaurantEdit() {
           name={["toastGuid"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}
@@ -37,6 +39,7 @@ export default function RestaurantEdit() {
           name={["toastToken"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}
@@ -48,6 +51,7 @@ export default function RestaurantEdit() {
           name={["toastManagementSetGuid"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}

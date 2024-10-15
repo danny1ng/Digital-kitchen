@@ -21,6 +21,7 @@ export default function EventCreate() {
           rules={[
             {
               required: true,
+              whitespace: true,
             },
           ]}
         >
@@ -32,6 +33,7 @@ export default function EventCreate() {
           rules={[
             {
               required: true,
+              whitespace: true,
             },
           ]}
         >

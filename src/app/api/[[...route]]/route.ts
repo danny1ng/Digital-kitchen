@@ -6,6 +6,7 @@ import { cron } from "@elysiajs/cron";
 import { logger } from "@bogeychan/elysia-logger";
 import { restaurantsRoute } from "@backend/api/restaurants";
 import { fetchKitchenRoute } from "@backend/api/fetch-kitchen";
+import { menusRoute } from "@backend/api/menus";
 
 /**
  * Main API router
@@ -22,6 +23,7 @@ const app = createElysia({ prefix: "/api" })
   .use(userRoute)
   .use(eventsRoute)
   .use(restaurantsRoute)
+  .use(menusRoute)
   .use(fetchKitchenRoute);
 
 /**

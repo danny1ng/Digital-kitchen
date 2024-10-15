@@ -14,6 +14,7 @@ export default function RestaurantCreate() {
           name={["name"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}
@@ -26,6 +27,7 @@ export default function RestaurantCreate() {
           name={["toastGuid"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}
@@ -37,6 +39,7 @@ export default function RestaurantCreate() {
           name={["toastToken"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}
@@ -48,6 +51,7 @@ export default function RestaurantCreate() {
           name={["toastManagementSetGuid"]}
           rules={[
             {
+              whitespace: true,
               required: true,
             },
           ]}

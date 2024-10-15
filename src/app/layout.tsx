@@ -60,6 +60,15 @@ export default function RootLayout({
                           canDelete: true,
                         },
                       },
+                      {
+                        name: "menus",
+                        list: "/menus",
+                        create: "/menus/create",
+                        edit: "/menus/edit/:id",
+                        meta: {
+                          canDelete: true,
+                        },
+                      },
                     ]}
                     options={{
                       syncWithLocation: true,

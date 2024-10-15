@@ -10,7 +10,7 @@ export const authRoute = new Elysia({ prefix: "/auth" })
     "/sign-in",
     async ({ body, jwt, cookie: { accessToken }, set }) => {
       const user = await prisma.user.findUnique({
-        where: { email: body.email },
+        where: { email: body.email.trim() },
         select: {
           id: true,
           email: true,
@@ -24,9 +24,10 @@ export const authRoute = new Elysia({ prefix: "/auth" })
           "The email address or password you entered is incorrect"
         );
       }
-      const matchPassword = await Bun.password
-        .verify(body.password, user.password)
-        .catch(console.log);
+      const matchPassword = await Bun.password.verify(
+        body.password.trim(),
+        user.password
+      );
 
       if (!matchPassword) {
         set.status = "Bad Request";
@@ -64,6 +65,7 @@ export const authRoute = new Elysia({ prefix: "/auth" })
     }
   )
   .post("/logout", async ({ cookie: { accessToken } }) => {
+    console.log("🚀 ~ .post ~ accessToken:", accessToken);
     accessToken.remove();
     return {
       message: "Logout successfully",
