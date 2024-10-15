@@ -47,7 +47,6 @@ export default function RootLayout({
                         list: "/events",
                         create: "/events/create",
                         edit: "/events/edit/:id",
-                        show: "/events/show/:id",
                         meta: {
                           canDelete: true,
                         },
@@ -57,7 +56,6 @@ export default function RootLayout({
                         list: "/restaurants",
                         create: "/restaurants/create",
                         edit: "/restaurants/edit/:id",
-                        show: "/restaurants/show/:id",
                         meta: {
                           canDelete: true,
                         },

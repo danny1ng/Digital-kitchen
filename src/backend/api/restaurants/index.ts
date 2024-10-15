@@ -36,25 +36,56 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
       }),
     }
   )
+  .delete(
+    "/:id",
+    async ({ params: { id } }) => {
+      const restaurant = await prisma.restaurant.delete({
+        where: { id },
+      });
+
+      return restaurant;
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
   .post(
     "/",
     async ({ body: { ...data } }) => {
       return await prisma.restaurant.create({
         data: {
           ...data,
-          // event: {
-          //   connect: (restaurantIds || []).map((item) => ({ id: item })),
-          // },
         },
       });
     },
     {
       body: t.Object({
         name: t.String(),
-        // description: t.String(),
-        // date: t.Date(),
-        // time: t.Optional(t.String()),
-        // restaurantIds: t.Optional(t.Array(t.String())),
+        toastToken: t.Optional(t.String()),
+        toastManagementSetGuid: t.Optional(t.String()),
+        toastGuid: t.Optional(t.String()),
+      }),
+    }
+  )
+  .patch(
+    "/:id",
+    async ({ body: { ...data }, params: { id } }) => {
+      return await prisma.restaurant.update({
+        data: {
+          ...data,
+        },
+        where: { id },
+      });
+    },
+    {
+      params: t.Object({ id: t.String() }),
+      body: t.Object({
+        name: t.String(),
+        toastToken: t.Optional(t.String()),
+        toastManagementSetGuid: t.Optional(t.String()),
+        toastGuid: t.Optional(t.String()),
       }),
     }
   );

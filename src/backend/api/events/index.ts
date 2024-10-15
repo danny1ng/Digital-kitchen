@@ -8,26 +8,27 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
   .use(isAuthenticated)
   .get(
     "/",
-    async ({ query: { name_like } }) => {
+    async ({ query: { name_like, id } }) => {
       const events = await prisma.event.findMany({
-        include: { restaurants: true },
-        where: { title: { contains: name_like } },
+        include: { restaurant: true },
+        where: { id, title: { contains: name_like } },
       });
 
       return events;
     },
     {
       query: t.Object({
+        id: t.Optional(t.String()),
         name_like: t.Optional(t.String()),
       }),
     }
   )
   .get(
     "/:id",
-    async ({ params: { id, name_like } }) => {
+    async ({ params: { id } }) => {
       const event = await prisma.event.findUnique({
         where: { id },
-        include: { restaurants: true },
+        include: { restaurant: true },
       });
 
       return event;
@@ -35,18 +36,32 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
     {
       params: t.Object({
         id: t.String(),
-        name_like: t.Optional(t.String()),
+      }),
+    }
+  )
+  .delete(
+    "/:id",
+    async ({ params: { id } }) => {
+      const event = await prisma.event.delete({
+        where: { id },
+      });
+
+      return event;
+    },
+    {
+      params: t.Object({
+        id: t.String(),
       }),
     }
   )
   .post(
     "/",
-    async ({ body: { restaurantIds, ...data } }) => {
+    async ({ body: { restaurantId, ...data } }) => {
       return await prisma.event.create({
         data: {
           ...data,
-          restaurants: {
-            connect: (restaurantIds || []).map((item) => ({ id: item })),
+          restaurant: {
+            connect: { id: restaurantId },
           },
         },
       });
@@ -57,22 +72,17 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
         description: t.String(),
         date: t.Date(),
         time: t.Optional(t.String()),
-        restaurantIds: t.Optional(t.Array(t.String())),
+        restaurantId: t.Optional(t.String()),
       }),
     }
   )
   .patch(
     "/:id",
-    async ({ body: { restaurantIds, ...data }, params: { id } }) => {
+    async ({ body: { restaurantId, ...data }, params: { id } }) => {
       return await prisma.event.update({
         data: {
           ...data,
-          restaurants:
-            (restaurantIds || []).length > 0
-              ? {
-                  connect: (restaurantIds || []).map((item) => ({ id: item })),
-                }
-              : { set: [] },
+          restaurantId: restaurantId || null,
         },
         where: { id },
       });
@@ -83,7 +93,7 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
         description: t.String(),
         date: t.Date(),
         time: t.Optional(t.String()),
-        restaurantIds: t.Optional(t.Array(t.String())),
+        restaurantId: t.Optional(t.String()),
       }),
     }
   );

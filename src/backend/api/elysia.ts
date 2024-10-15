@@ -57,6 +57,7 @@ export const createElysia = <P extends string, S extends boolean>(
   }).onError(({ error, set }) => {
     const prismaError = error as PrismaClientKnownRequestError;
     if (!(error as any).type) {
+      console.log("🚀 ~ prismaError:", prismaError);
       switch (prismaError.code) {
         case "P2002":
           // handling duplicate key errors

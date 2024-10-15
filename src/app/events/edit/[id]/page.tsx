@@ -12,37 +12,19 @@ export default function RestaurantEdit() {
     formProps,
     saveButtonProps,
     query: queryResult,
-    onFinish,
-  } = useForm<Event & { restaurants: string[] }>({
-    queryOptions: {
-      select: ({ data }) => {
-        return {
-          data: {
-            ...data,
-            restaurants: ((data as any).restaurants as Restaurant[]).map(
-              (item) => item.id
-            ),
-          },
-        };
-      },
-    },
-  });
+  } = useForm<Event & { restaurants: string[] }>();
 
   const data = queryResult?.data?.data;
 
   const { selectProps: restaurantSelectProps } = useSelect({
     resource: "restaurants",
     optionLabel: "name",
-    defaultValue: data?.restaurants || [],
+    defaultValue: data?.restaurantId || "",
   });
-
-  const handleFinish = useCallback(({ restaurants, ...values }: any) => {
-    return onFinish({ ...values, restaurantIds: restaurants });
-  }, []);
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical" onFinish={handleFinish}>
+      <Form {...formProps} layout="vertical">
         <Form.Item
           label={"Title"}
           name={["title"]}
@@ -101,7 +83,7 @@ export default function RestaurantEdit() {
         </Flex>
         <Form.Item
           label={"Restaurant"}
-          name={["restaurants"]}
+          name={["restaurantId"]}
           rules={[
             {
               required: false,
@@ -109,9 +91,9 @@ export default function RestaurantEdit() {
           ]}
         >
           <Select
-            mode="multiple"
             {...restaurantSelectProps}
             onBlur={() => restaurantSelectProps?.onSearch?.("")}
+            allowClear
           />
         </Form.Item>
       </Form>

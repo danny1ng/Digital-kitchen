@@ -9,6 +9,7 @@ export default function EventCreate() {
 
   const { selectProps: restaurantSelectProps } = useSelect({
     resource: "restaurants",
+    optionLabel: "name",
   });
 
   return (
@@ -62,14 +63,14 @@ export default function EventCreate() {
         </Flex>
         <Form.Item
           label={"Restaurant"}
-          name={["restaurantIds"]}
+          name={["restaurantId"]}
           rules={[
             {
               required: false,
             },
           ]}
         >
-          <Select mode="multiple" {...restaurantSelectProps} />
+          <Select {...restaurantSelectProps} allowClear />
         </Form.Item>
       </Form>
     </Create>

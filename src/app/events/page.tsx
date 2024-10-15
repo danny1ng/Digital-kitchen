@@ -28,11 +28,8 @@ export default function EventsList() {
           }}
         />
         <Table.Column
-          dataIndex={"restaurants"}
+          dataIndex={["restaurant", "name"]}
           title={"Restaurants"}
-          render={(value: Restaurant[]) => {
-            return value?.map((item) => item.name).join(", ");
-          }}
         />
         <Table.Column
           dataIndex={["createdAt"]}

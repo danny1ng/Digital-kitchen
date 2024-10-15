@@ -19,6 +19,7 @@ export default function RestaurantList() {
     <List>
       <Table {...tableProps} rowKey="id">
         <Table.Column dataIndex="name" title={"Name"} />
+        <Table.Column dataIndex="toastGuid" title={"toastGuid"} />
         <Table.Column
           title={"Actions"}
           dataIndex="actions"
