@@ -2,9 +2,8 @@ import Elysia, { t } from "elysia";
 
 import prisma from "@backend/lib/prisma";
 import { isAuthenticated } from "../auth/is-authenticated";
-import { Event, Prisma, Restaurant } from "@prisma/client";
 import { ToastService } from "@backend/services/fetch-toast-tab-kitchen/toast-service";
-import { message } from "antd";
+import { menus } from "./mock";
 
 export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
   .use(isAuthenticated)
@@ -15,14 +14,179 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
         toastToken,
         restaurantGuid
       );
-      const restaurant = await prisma.restaurant.create({
-        data: {
-          name: restaurantName,
+      // FIXME: remove mock
+      // const toastService = new ToastService(
+      //   toastToken,
+      //   restaurantGuid,
+      //   managementSetGuid as string
+      // );
+      // const menus = await toastService.fetchAllMenuFromToast();
+
+      await prisma.restaurant.upsert({
+        where: { toastGuid: restaurantGuid },
+        include: {
+          menu: {
+            include: {
+              items: {
+                include: {
+                  items: true,
+                },
+              },
+            },
+          },
+        },
+        update: {
           toastToken: toastToken,
+          menu: {
+            upsert: menus.map((menu) => ({
+              update: {
+                items: {
+                  upsert: menu.groups.map((group) => ({
+                    update: {
+                      items: {
+                        connectOrCreate: group.items.map((item) => ({
+                          create: {
+                            name: item.name,
+                            guid: item.guid,
+                            description: item.description,
+                            calories: item.calories,
+                            basePrice: item.pricing.basePrice,
+                            imageToast: item.imagePath,
+                          },
+                          where: {
+                            guid: item.guid,
+                          },
+                        })),
+                      },
+                    },
+                    create: {
+                      name: group.name,
+                      guid: group.guid,
+                      items: {
+                        connectOrCreate: group.items.map((item) => ({
+                          create: {
+                            name: item.name,
+                            guid: item.guid,
+                            description: item.description,
+                            calories: item.calories,
+                            basePrice: item.pricing.basePrice,
+                            imageToast: item.imagePath,
+                          },
+                          where: {
+                            guid: item.guid,
+                          },
+                        })),
+                      },
+                    },
+                    where: {
+                      guid: group.guid,
+                    },
+                  })),
+                },
+              },
+              where: { guid: menu.guid },
+              create: {
+                name: menu.name,
+                guid: menu.guid,
+                items: {
+                  connectOrCreate: menu.groups.map((group) => ({
+                    create: {
+                      name: group.name,
+                      guid: group.guid,
+                      items: {
+                        connectOrCreate: group.items.map((item) => ({
+                          create: {
+                            name: item.name,
+                            guid: item.guid,
+                            description: item.description,
+                            calories: item.calories,
+                            basePrice: item.pricing.basePrice,
+                            imageToast: item.imagePath,
+                          },
+                          where: {
+                            guid: item.guid,
+                          },
+                        })),
+                      },
+                    },
+                    where: {
+                      guid: group.guid,
+                    },
+                  })),
+                },
+              },
+            })),
+          },
+        },
+        create: {
+          name: restaurantName,
+          toastToken,
           toastManagementSetGuid: managementSetGuid,
           toastGuid: restaurantGuid,
+          menu: {
+            connectOrCreate: menus.map((menu) => ({
+              create: {
+                name: menu.name,
+                guid: menu.guid,
+                items: {
+                  connectOrCreate: menu.groups.map((group) => ({
+                    create: {
+                      name: group.name,
+                      guid: group.guid,
+                      items: {
+                        connectOrCreate: group.items
+                          .map((item) => ({
+                            create: {
+                              name: item.name,
+                              guid: item.guid,
+                            },
+                            where: {
+                              guid: item.guid,
+                            },
+                          }))
+                          .slice(0, 30),
+                      },
+                    },
+                    where: {
+                      guid: group.guid,
+                    },
+                  })),
+                },
+              },
+              where: {
+                guid: menu.guid,
+              },
+            })),
+          },
         },
       });
+
+      // const restaurantFound = await prisma.restaurant
+      //   .findUnique({
+      //     where: { toastGuid: restaurantGuid },
+      //   })
+      //   .catch(() => null);
+
+      // if (restaurantFound) {
+      //   restaurant = await prisma.restaurant.update({
+      //     where: { toastGuid: restaurantGuid },
+      //     data: {
+      //       name: restaurantName,
+      //       toastToken: toastToken,
+      //       toastManagementSetGuid: managementSetGuid,
+      //       toastGuid: restaurantGuid,
+      //     },
+      //   });
+      // } else {
+      //   restaurant = await prisma.restaurant.create({
+      //     data: {
+      //       name: restaurantName,
+      //       toastToken: toastToken,
+      //       toastManagementSetGuid: managementSetGuid,
+      //       toastGuid: restaurantGuid,
+      //     },
+      //   });
+      // }
       // restaurant = await DbHelper.CreateRestaurant(roleId, restaurantName, restaurantGuid, toastToken, managementSetGuid);
       // } else {
       // if (toastToken) {
@@ -31,19 +195,27 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
       // restaurant = await DbHelper.GetRestaurantByGuid(roleId, restaurantGuid);
       // }
 
-      const toastService = new ToastService(
-        restaurant.toastToken as string,
-        restaurant.toastGuid as string,
-        restaurant.toastManagementSetGuid as string
-      );
-      const menus = await toastService.fetchAllMenuFromToast();
+      // const formattedMenu = menus.map((menu) => {
+      //   return {
+      //     name: menu.name,
+      //     guid: menu.guid,
+      //   };
+      // });
+
+      // const menusData = prisma.menu.upse({
+      //   data: formattedMenu,
+      // });
+
+      // await prisma.$transaction([menusData]);
+
+      // await prisma.$disconnect();
 
       // if (type === OperationType.Create) {
       // return DbHelper.SaveAllMenu(roleId, fields, restaurant.restaurantId, menus);
       // } else {
       // return DbHelper.UpdateMenu(roleId, fields, restaurant.restaurantId, menus);
       // }
-      return { message: "success", menus };
+      return { message: "success" };
     },
     {
       body: t.Object({

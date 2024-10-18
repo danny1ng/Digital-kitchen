@@ -14,6 +14,9 @@ import { Space, Table } from "antd";
 export default function EventsList() {
   const { tableProps } = useTable<Event & { restaurants: Restaurant[] }>({
     syncWithLocation: true,
+    queryOptions: {
+      refetchOnWindowFocus: true,
+    },
   });
 
   return (

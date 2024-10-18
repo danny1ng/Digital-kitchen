@@ -9,12 +9,17 @@ export const menusRoute = new Elysia({ prefix: "/menus" })
   .get(
     "/",
     async ({ query: { name_like, id } }) => {
-      // const events = await prisma.event.findMany({
-      //   include: { restaurant: true },
-      //   where: { id, title: { contains: name_like } },
-      // });
+      const menus = await prisma.menu.findMany({
+        include: {
+          restaurant: {
+            select: { name: true, id: true },
+          },
+          items: true,
+        },
+        where: { id },
+      });
 
-      return [];
+      return menus;
     },
     {
       query: t.Object({

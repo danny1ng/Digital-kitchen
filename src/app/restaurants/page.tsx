@@ -13,6 +13,9 @@ import { Space, Table } from "antd";
 export default function RestaurantList() {
   const { tableProps } = useTable({
     syncWithLocation: true,
+    queryOptions: {
+      refetchOnWindowFocus: true,
+    },
   });
 
   return (

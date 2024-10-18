@@ -43,7 +43,7 @@ model Event {
 model Restaurant {
   id                     String  @id @default(uuid())
   name                   String
-  toastGuid              String?
+  toastGuid              String? @unique
   toastToken             String?
   toastManagementSetGuid String?
   events                 Event[]
@@ -51,24 +51,27 @@ model Restaurant {
 }
 
 model Menu {
-  id           Int         @id @default(autoincrement())
+  id           String      @id @default(uuid())
+  guid         String?     @unique
   name         String
-  position     Int
+  position     Int?
   items        MenuGroup[]
   restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
   restaurantId String?
 }
 
 model MenuGroup {
-  id     Int        @id @default(autoincrement())
+  id     String     @id @default(uuid())
+  guid   String?    @unique
   name   String
-  menuId Int
-  menu   Menu       @relation(fields: [menuId], references: [id])
+  menu   Menu?      @relation(fields: [menuId], references: [id])
+  menuId String?
   items  MenuItem[]
 }
 
 model MenuItem {
-  id              Int       @id @default(autoincrement())
+  id              String     @id @default(uuid())
+  guid            String?    @unique
   name            String
   description     String?
   image           String?
@@ -76,9 +79,9 @@ model MenuItem {
   basePrice       Float?
   maxPrice        Float?
   minPrice        Float?
-  inheritPricing  Boolean
+  inheritPricing  Boolean?
   pricingStrategy String?
   imageToast      String?
-  menuGroupId     Int
-  menuGroup       MenuGroup @relation(fields: [menuGroupId], references: [id])
+  menuGroup       MenuGroup? @relation(fields: [menuGroupId], references: [id])
+  menuGroupId     String?
 }
