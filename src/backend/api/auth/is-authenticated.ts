@@ -19,6 +19,7 @@ export const isAuthenticated = new Elysia({ name: "jwt-auth" })
       select: {
         id: true,
         email: true,
+        role: true,
       },
     });
 

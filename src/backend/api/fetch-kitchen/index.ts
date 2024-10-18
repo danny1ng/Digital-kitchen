@@ -1,12 +1,12 @@
 import Elysia, { t } from "elysia";
 
 import prisma from "@backend/lib/prisma";
-import { isAuthenticated } from "../auth/is-authenticated";
 import { ToastService } from "@backend/services/fetch-toast-tab-kitchen/toast-service";
 import { menus } from "./mock";
+import { isRoles } from "../auth/is-role";
 
 export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
-  .use(isAuthenticated)
+  .use(isRoles(["ADMIN"]))
   .post(
     "/toasttab",
     async ({ body: { toastToken, restaurantGuid, restaurantName } }) => {

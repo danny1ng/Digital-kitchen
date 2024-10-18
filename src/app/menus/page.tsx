@@ -1,13 +1,7 @@
 "use client";
 
 import { Event, Menu, Restaurant } from "@prisma/client";
-import {
-  DateField,
-  DeleteButton,
-  EditButton,
-  List,
-  useTable,
-} from "@refinedev/antd";
+import { DeleteButton, EditButton, List, useTable } from "@refinedev/antd";
 import { type BaseRecord } from "@refinedev/core";
 import { Space, Table } from "antd";
 
