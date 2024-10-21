@@ -10,7 +10,7 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
     "/",
     async ({ query: { name_like, id } }) => {
       const events = await prisma.event.findMany({
-        orderBy: { createdAt: "asc" },
+        orderBy: { title: "asc" },
         include: { restaurant: true },
         where: { id, title: { contains: name_like } },
       });

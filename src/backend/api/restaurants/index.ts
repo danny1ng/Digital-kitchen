@@ -9,7 +9,7 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
     "/",
     async ({ query: { name_like, id } }) => {
       const restaurants = await prisma.restaurant.findMany({
-        orderBy: { createdAt: "asc" },
+        orderBy: { name: "asc" },
         where: { id, name: { contains: name_like, mode: "insensitive" } },
       });
 
