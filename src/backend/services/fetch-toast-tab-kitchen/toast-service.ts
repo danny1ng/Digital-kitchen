@@ -12,7 +12,7 @@ interface CategoryMenuToast {
   groups: Map<string, GroupMenuToast>;
 }
 
-interface GroupMenuToast {
+export interface GroupMenuToast {
   guid: string;
   name: string;
   items: ItemMenuToast[];

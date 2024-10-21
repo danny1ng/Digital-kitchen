@@ -2,6 +2,7 @@ import Elysia, { t } from "elysia";
 
 import prisma from "@backend/lib/prisma";
 import { isAuthenticated } from "../auth/is-authenticated";
+import { message } from "antd";
 
 export const menusRoute = new Elysia({ prefix: "/menus" })
   .use(isAuthenticated)
@@ -54,52 +55,86 @@ export const menusRoute = new Elysia({ prefix: "/menus" })
     "/:id",
     async ({ body, params: { id } }) => {
       try {
-        return await prisma.menu.update({
-          include: {
-            items: {
-              include: {
-                items: true,
+        const [menu] = await prisma.$transaction([
+          prisma.menu.update({
+            include: {
+              items: {
+                include: {
+                  items: true,
+                },
               },
             },
-          },
-          data: {
-            name: body.name,
-            position: body.position,
-            restaurantId: body.restaurantId,
-            items: {
-              deleteMany: {
-                NOT: (body.items || []).map((group) => ({
-                  id: group.id,
-                })),
-              },
-              upsert: (body.items || []).map((group) => ({
-                update: {
-                  // name: group.name,
-                  // items: {},
+            data: {
+              name: body.name,
+              position: body.position,
+              restaurantId: body.restaurantId,
+              items: {
+                deleteMany: {
+                  NOT: body.items?.map((group) => ({ id: group.id })),
                 },
-                create: {
-                  name: group.name,
-                  guid: "qweqe",
-                  items: {
-                    create: (group.items || []).map((item) => {
-                      return {
+                update: (body.items || [])
+                  .filter((group) => group.id)
+                  .map((group) => ({
+                    data: {
+                      name: group.name,
+                      items: {
+                        deleteMany: {
+                          NOT: group.items?.map((group) => ({ id: group.id })),
+                        },
+                        update: (group.items || [])
+                          .filter((item) => item.id)
+                          .map((item) => ({
+                            data: {
+                              name: item.name,
+                              description: item.description,
+                              basePrice: item.basePrice,
+                              calories: item.calories,
+                              imageToast: item.imageToast,
+                            },
+                            where: {
+                              id: item.id,
+                            },
+                          })),
+                        create: (group.items || [])
+                          .filter((item) => !item.id)
+                          .map((item) => ({
+                            name: item.name,
+                            description: item.description,
+                            basePrice: item.basePrice,
+                            calories: item.calories,
+                            imageToast: item.imageToast,
+                          })),
+                      },
+                    },
+                    where: {
+                      id: group.id,
+                    },
+                  })),
+                create: (body.items || [])
+                  .filter((group) => !group.id)
+                  .map((group) => ({
+                    name: group.name,
+                    items: {
+                      create: (group.items || []).map((item) => ({
                         name: item.name,
-                        // description: item.description,
-                        // basePrice: item.basePrice,
-                        // menuGroupId: item.menuGroupId,
-                        // calories: item.calories,
-                      };
-                    }),
-                  },
-                },
-                where: {
-                  id: group.id,
-                },
-              })),
+                        description: item.description,
+                        basePrice: item.basePrice,
+                        calories: item.calories,
+                        imageToast: item.imageToast,
+                      })),
+                    },
+                  })),
+              },
             },
-          },
-          where: { id },
-        });
+            where: { id },
+          }),
+          prisma.menuItem.deleteMany({
+            where: {
+              menuGroupId: null,
+            },
+          }),
+        ]);
+        return menu;
       } catch (error) {
         console.log("🚀 ~ error:", error);
         return error;
@@ -109,23 +144,25 @@ export const menusRoute = new Elysia({ prefix: "/menus" })
       params: t.Object({ id: t.String() }),
       body: t.Object({
         name: t.String(),
-        position: t.Optional(t.Number()),
+        position: t.Optional(t.Nullable(t.Number())),
         restaurantId: t.String(),
         items: t.Optional(
           t.Array(
             t.Object({
               id: t.Optional(t.String()),
+              guid: t.Optional(t.Nullable(t.String())),
               name: t.String(),
               menuId: t.Optional(t.String()),
               items: t.Optional(
                 t.Array(
                   t.Object({
                     id: t.Optional(t.String()),
+                    guid: t.Optional(t.Nullable(t.String())),
                     name: t.String(),
-                    description: t.Optional(t.String()),
-                    menuGroupId: t.Optional(t.String()),
-                    basePrice: t.Optional(t.Number()),
-                    calories: t.Optional(t.Number()),
+                    description: t.Optional(t.Nullable(t.String())),
+                    imageToast: t.Optional(t.Nullable(t.String())),
+                    basePrice: t.Optional(t.Nullable(t.Number())),
+                    calories: t.Optional(t.Nullable(t.Number())),
                   })
                 )
               ),

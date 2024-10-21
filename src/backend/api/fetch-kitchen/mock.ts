@@ -1,3 +1,5 @@
+import { MenusToast } from "@backend/services/fetch-toast-tab-kitchen/toast-service";
+
 export const menus = [
   {
     guid: "b07a5ae7-dae0-4858-a1f9-71a0fc0f1061",

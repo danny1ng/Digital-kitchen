@@ -41,9 +41,11 @@ model Event {
 }
 
 model Restaurant {
-  id                     String  @id @default(uuid())
+  id                     String   @id @default(uuid())
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
   name                   String
-  toastGuid              String? @unique
+  toastGuid              String?  @unique
   toastToken             String?
   toastManagementSetGuid String?
   events                 Event[]
@@ -53,6 +55,8 @@ model Restaurant {
 model Menu {
   id           String      @id @default(uuid())
   guid         String?     @unique
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
   name         String
   position     Int?
   items        MenuGroup[]
@@ -61,17 +65,21 @@ model Menu {
 }
 
 model MenuGroup {
-  id     String     @id @default(uuid())
-  guid   String?    @unique
-  name   String
-  menu   Menu?      @relation(fields: [menuId], references: [id])
-  menuId String?
-  items  MenuItem[]
+  id        String     @id @default(uuid())
+  guid      String?    @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  menu      Menu?      @relation(fields: [menuId], references: [id])
+  menuId    String?
+  items     MenuItem[]
 }
 
 model MenuItem {
   id              String     @id @default(uuid())
   guid            String?    @unique
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
   name            String
   description     String?
   image           String?
