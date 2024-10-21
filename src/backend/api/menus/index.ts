@@ -2,7 +2,6 @@ import Elysia, { t } from "elysia";
 
 import prisma from "@backend/lib/prisma";
 import { isAuthenticated } from "../auth/is-authenticated";
-import { message } from "antd";
 
 export const menusRoute = new Elysia({ prefix: "/menus" })
   .use(isAuthenticated)
@@ -10,6 +9,7 @@ export const menusRoute = new Elysia({ prefix: "/menus" })
     "/",
     async ({ query: { name_like, id } }) => {
       const menus = await prisma.menu.findMany({
+        orderBy: { createdAt: "asc" },
         include: {
           restaurant: {
             select: { name: true, id: true },
