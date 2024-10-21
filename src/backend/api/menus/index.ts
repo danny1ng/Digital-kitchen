@@ -171,78 +171,31 @@ export const menusRoute = new Elysia({ prefix: "/menus" })
         ),
       }),
     }
+  )
+  .delete(
+    "/:id",
+    async ({ params: { id } }) => {
+      const [menu] = await prisma.$transaction([
+        prisma.menu.delete({
+          where: { id },
+        }),
+        prisma.menuGroup.deleteMany({
+          where: {
+            menuId: null,
+          },
+        }),
+        prisma.menuItem.deleteMany({
+          where: {
+            menuGroupId: null,
+          },
+        }),
+      ]);
+
+      return { message: "Successfully" };
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
   );
-// .get(
-//   "/:id",
-//   async ({ params: { id } }) => {
-//     const event = await prisma.event.findUnique({
-//       where: { id },
-//       include: { restaurant: true },
-//     });
-
-//     return event;
-//   },
-//   {
-//     params: t.Object({
-//       id: t.String(),
-//     }),
-//   }
-// )
-// .delete(
-//   "/:id",
-//   async ({ params: { id } }) => {
-//     const event = await prisma.event.delete({
-//       where: { id },
-//     });
-
-//     return event;
-//   },
-//   {
-//     params: t.Object({
-//       id: t.String(),
-//     }),
-//   }
-// )
-// .post(
-//   "/",
-//   async ({ body: { restaurantId, ...data } }) => {
-//     return await prisma.event.create({
-//       data: {
-//         ...data,
-//         restaurant: {
-//           connect: { id: restaurantId },
-//         },
-//       },
-//     });
-//   },
-//   {
-//     body: t.Object({
-//       title: t.String(),
-//       description: t.String(),
-//       date: t.Date(),
-//       time: t.Optional(t.String()),
-//       restaurantId: t.Optional(t.String()),
-//     }),
-//   }
-// )
-// .patch(
-//   "/:id",
-//   async ({ body: { restaurantId, ...data }, params: { id } }) => {
-//     return await prisma.event.update({
-//       data: {
-//         ...data,
-//         restaurantId: restaurantId || null,
-//       },
-//       where: { id },
-//     });
-//   },
-//   {
-//     body: t.Object({
-//       title: t.String(),
-//       description: t.String(),
-//       date: t.Date(),
-//       time: t.Optional(t.String()),
-//       restaurantId: t.Optional(t.String()),
-//     }),
-//   }
-// );
