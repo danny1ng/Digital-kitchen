@@ -9,6 +9,7 @@ export const isAuthenticated = new Elysia({ name: "jwt-auth" })
     const token = await jwt.verify((accessToken.cookie.value as string) || "");
 
     if (!token) {
+      accessToken.remove();
       return error(401, {
         message: "Unauthorized",
       });
@@ -24,6 +25,7 @@ export const isAuthenticated = new Elysia({ name: "jwt-auth" })
     });
 
     if (!user) {
+      accessToken.remove();
       return error(401, {
         message: "Unauthorized",
       });

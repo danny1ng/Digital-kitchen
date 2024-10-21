@@ -65,7 +65,6 @@ export const authRoute = new Elysia({ prefix: "/auth" })
     }
   )
   .post("/logout", async ({ cookie: { accessToken } }) => {
-    console.log("🚀 ~ .post ~ accessToken:", accessToken);
     accessToken.remove();
     return {
       message: "Logout successfully",
