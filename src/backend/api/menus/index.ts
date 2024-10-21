@@ -26,6 +26,114 @@ export const menusRoute = new Elysia({ prefix: "/menus" })
         name_like: t.Optional(t.String()),
       }),
     }
+  )
+  .get(
+    "/:id",
+    async ({ params: { id } }) => {
+      const menu = await prisma.menu.findUnique({
+        where: { id },
+        include: {
+          restaurant: {
+            select: { name: true, id: true },
+          },
+          items: {
+            include: { items: true },
+          },
+        },
+      });
+
+      return menu;
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+    }
+  )
+  .patch(
+    "/:id",
+    async ({ body, params: { id } }) => {
+      try {
+        return await prisma.menu.update({
+          include: {
+            items: {
+              include: {
+                items: true,
+              },
+            },
+          },
+          data: {
+            name: body.name,
+            position: body.position,
+            restaurantId: body.restaurantId,
+            items: {
+              deleteMany: {
+                NOT: (body.items || []).map((group) => ({
+                  id: group.id,
+                })),
+              },
+              upsert: (body.items || []).map((group) => ({
+                update: {
+                  // name: group.name,
+                  // items: {},
+                },
+                create: {
+                  name: group.name,
+                  guid: "qweqe",
+                  items: {
+                    create: (group.items || []).map((item) => {
+                      return {
+                        name: item.name,
+                        // description: item.description,
+                        // basePrice: item.basePrice,
+                        // menuGroupId: item.menuGroupId,
+                        // calories: item.calories,
+                      };
+                    }),
+                  },
+                },
+                where: {
+                  id: group.id,
+                },
+              })),
+            },
+          },
+          where: { id },
+        });
+      } catch (error) {
+        console.log("🚀 ~ error:", error);
+        return error;
+      }
+    },
+    {
+      params: t.Object({ id: t.String() }),
+      body: t.Object({
+        name: t.String(),
+        position: t.Optional(t.Number()),
+        restaurantId: t.String(),
+        items: t.Optional(
+          t.Array(
+            t.Object({
+              id: t.Optional(t.String()),
+              name: t.String(),
+              menuId: t.Optional(t.String()),
+              items: t.Optional(
+                t.Array(
+                  t.Object({
+                    id: t.Optional(t.String()),
+                    name: t.String(),
+                    description: t.Optional(t.String()),
+                    menuGroupId: t.Optional(t.String()),
+                    basePrice: t.Optional(t.Number()),
+                    calories: t.Optional(t.Number()),
+                  })
+                )
+              ),
+            })
+          )
+        ),
+      }),
+    }
   );
 // .get(
 //   "/:id",

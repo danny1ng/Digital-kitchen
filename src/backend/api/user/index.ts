@@ -8,5 +8,6 @@ export const userRoute = new Elysia({ prefix: "/user" })
     return {
       id: user.id,
       email: user.email,
+      role: user.role,
     };
   });

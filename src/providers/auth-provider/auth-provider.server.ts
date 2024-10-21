@@ -1,10 +1,11 @@
+import { Role } from "@prisma/client";
 import type { AuthProvider } from "@refinedev/core";
 import axios from "axios";
 import cookie from "cookie";
 import { cookies } from "next/headers";
 
-export const authProviderServer: Pick<AuthProvider, "check"> = {
-  check: async () => {
+export const authProviderServer = {
+  check: async ({ roles }: { roles: Role[] }) => {
     const cookieStore = cookies();
     const cookieAccessToken = cookieStore.get("accessToken");
 
@@ -29,10 +30,15 @@ export const authProviderServer: Pick<AuthProvider, "check"> = {
         withCredentials: true,
       }
     );
-
-    if (data) {
+    if (data && roles.includes(data.role)) {
       return {
         authenticated: true,
+      };
+    }
+    if (data && !roles.includes(data.role)) {
+      return {
+        authenticated: false,
+        error: "Forbidden",
       };
     }
 
@@ -40,6 +46,7 @@ export const authProviderServer: Pick<AuthProvider, "check"> = {
       authenticated: false,
       logout: true,
       redirectTo: "/login",
+      error: "Unauthorized",
     };
   },
 };

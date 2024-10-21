@@ -1,9 +1,18 @@
 "use client";
 
+import { MenusGroup } from "@app/menus/_components/menus";
 import { Event, Restaurant } from "@prisma/client";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 
-import { DatePicker, Flex, Form, Input, Select, TimePicker } from "antd";
+import {
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  TimePicker,
+} from "antd";
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
@@ -24,78 +33,50 @@ export default function MenuEdit() {
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+      <Form {...formProps} layout="vertical" size="large">
         <Form.Item
-          label={"Title"}
-          name={["title"]}
+          label="Name"
+          name={["name"]}
           rules={[
             {
               required: true,
+              whitespace: true,
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label={"Description"}
-          name="description"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input.TextArea rows={5} />
-        </Form.Item>
         <Flex gap={24}>
           <Form.Item
-            label={"Date"}
-            name={["date"]}
-            getValueProps={(value) => {
-              return {
-                value: value ? dayjs(value) : "",
-              };
-            }}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            label={"Time"}
-            name={["time"]}
-            getValueProps={(value) => {
-              return {
-                value: value ? dayjs(value) : "",
-              };
-            }}
+            label="Position"
+            name={["position"]}
+            style={{ width: "50%" }}
             rules={[
               {
                 required: false,
               },
             ]}
           >
-            <TimePicker format="HH:mm" />
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item
+            label={"Restaurant"}
+            name={["restaurantId"]}
+            style={{ width: "50%" }}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Select
+              {...restaurantSelectProps}
+              onBlur={() => restaurantSelectProps?.onSearch?.("")}
+              allowClear
+            />
           </Form.Item>
         </Flex>
-        <Form.Item
-          label={"Restaurant"}
-          name={["restaurantId"]}
-          rules={[
-            {
-              required: false,
-            },
-          ]}
-        >
-          <Select
-            {...restaurantSelectProps}
-            onBlur={() => restaurantSelectProps?.onSearch?.("")}
-            allowClear
-          />
-        </Form.Item>
+        <MenusGroup />
       </Form>
     </Edit>
   );

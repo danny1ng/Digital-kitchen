@@ -15,8 +15,9 @@ export default async function Layout({ children }: React.PropsWithChildren) {
 }
 
 async function getData() {
-  const { authenticated, redirectTo } = await authProviderServer.check();
-
+  const { authenticated, redirectTo } = await authProviderServer.check({
+    roles: ["ADMIN", "USER"],
+  });
   return {
     authenticated,
     redirectTo,

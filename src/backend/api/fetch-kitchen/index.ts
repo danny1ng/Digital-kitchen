@@ -10,10 +10,10 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
   .post(
     "/toasttab",
     async ({ body: { toastToken, restaurantGuid, restaurantName } }) => {
-      const managementSetGuid = await ToastService.FetchManagementSetGuid(
-        toastToken,
-        restaurantGuid
-      );
+      // const managementSetGuid = await ToastService.FetchManagementSetGuid(
+      //   toastToken,
+      //   restaurantGuid
+      // );
       // FIXME: remove mock
       // const toastService = new ToastService(
       //   toastToken,
@@ -120,8 +120,8 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
         },
         create: {
           name: restaurantName,
-          toastToken,
-          toastManagementSetGuid: managementSetGuid,
+          // toastToken,
+          // toastManagementSetGuid: managementSetGuid,
           toastGuid: restaurantGuid,
           menu: {
             connectOrCreate: menus.map((menu) => ({
