@@ -69,6 +69,13 @@ export default function RootLayout({
                           canDelete: true,
                         },
                       },
+                      {
+                        name: "import-menu",
+                        list: "/import-menu",
+                        meta: {
+                          label: "Import menu",
+                        },
+                      },
                     ]}
                     options={{
                       syncWithLocation: true,
