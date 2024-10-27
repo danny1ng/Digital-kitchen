@@ -1,29 +1,40 @@
 "use client";
 
-import { Typography, Tabs } from "antd";
+import { Typography, Tabs, Card } from "antd";
 
-import type { TabsProps } from "antd";
+import { useState } from "react";
+import { ImportForm } from "./_components/import-form";
+import { UpdateMenuForm } from "./_components/update-menu";
 
-const items: TabsProps["items"] = [
+const items = [
   {
-    key: "1",
+    key: "import",
     label: "Import menu",
-    children: <>sadas</>,
   },
   {
-    key: "2",
+    key: "update",
     label: "Update menu",
-    children: <>'Content of Tab Pane 2'</>,
   },
 ];
 
 export default function ImportMenuPlugin() {
+  const [activeTabKey, setActiveTabKey] = useState<"import" | "update">(
+    "import"
+  );
+
   return (
     <div>
       <Typography.Title level={4} style={{ marginTop: 6 }}>
         Import menu plugin
       </Typography.Title>
-      <Tabs defaultActiveKey="1" items={items} />;
+      <Card
+        tabList={items}
+        activeTabKey={activeTabKey}
+        onTabChange={(key) => setActiveTabKey(key as any)}
+      >
+        {activeTabKey === "import" && <ImportForm />}
+        {activeTabKey === "update" && <UpdateMenuForm />}
+      </Card>
     </div>
   );
 }
