@@ -1,3 +1,4 @@
+import { API_URL } from "@constants";
 import { Role } from "@prisma/client";
 import type { AuthProvider } from "@refinedev/core";
 import axios from "axios";
@@ -16,20 +17,21 @@ export const authProviderServer = {
         redirectTo: "/login",
       };
     }
-
-    const { data } = await axios(
-      process.env.NEXT_PUBLIC_API_BASE_URL + "/user/me",
-      {
+    const { data } = await axios
+      .get(API_URL + "/user/me", {
+        baseURL: "",
         headers: {
           "Content-Type": "application/json",
-          cookie: cookie.serialize(
-            cookieAccessToken?.name || "",
-            cookieAccessToken?.value || ""
-          ),
+          Cookie: cookieAccessToken
+            ? `${cookieAccessToken.name}=${cookieAccessToken.value}`
+            : "",
         },
-        withCredentials: true,
-      }
-    );
+      })
+      .catch((e) => {
+        console.log(e);
+        return { data: null };
+      });
+
     if (data && roles.includes(data.role)) {
       return {
         authenticated: true,

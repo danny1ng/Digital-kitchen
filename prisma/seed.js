@@ -1,12 +1,12 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-// import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 const password = "123123123";
 
 async function main() {
-  const hashedPassword = await Bun.password.hash(password);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const userData = [
     {
@@ -14,7 +14,7 @@ async function main() {
       password: hashedPassword,
     },
   ];
-  console.log("🚀 ~ main ~ userData:", userData)
+  console.log("🚀 ~ main ~ userData:", userData);
 
   console.log("Start seeding ...");
   for (const u of userData) {

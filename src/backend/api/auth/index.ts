@@ -3,6 +3,7 @@ import { getExpTimestamp } from "@lib/get-exp-timestamp";
 import { ACCESS_TOKEN_EXP } from "@constants";
 import prisma from "@backend/lib/prisma";
 import { jwtSetup } from "./jwt";
+import * as bcrypt from "bcrypt";
 
 export const authRoute = new Elysia({ prefix: "/auth" })
   .use(jwtSetup)
@@ -24,7 +25,7 @@ export const authRoute = new Elysia({ prefix: "/auth" })
           "The email address or password you entered is incorrect"
         );
       }
-      const matchPassword = await Bun.password.verify(
+      const matchPassword = await bcrypt.compare(
         body.password.trim(),
         user.password
       );
@@ -45,6 +46,7 @@ export const authRoute = new Elysia({ prefix: "/auth" })
         httpOnly: true,
         maxAge: ACCESS_TOKEN_EXP,
         path: "/",
+        secure: true,
       });
 
       return {
