@@ -2,6 +2,9 @@
     "functions": {
       "src/app/api/fetch/**": {
         "maxDuration": 20 
+      },
+      "src/backend/api/fetch-kitchen/index.ts": {
+        "maxDuration": 20 
       }
     }
   }
