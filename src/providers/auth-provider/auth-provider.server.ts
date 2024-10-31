@@ -9,6 +9,7 @@ export const authProviderServer = {
   check: async ({ roles }: { roles: Role[] }) => {
     const cookieStore = cookies();
     const cookieAccessToken = cookieStore.get("accessToken");
+    console.log("🚀 ~ check: ~ cookieAccessToken:", cookieAccessToken);
 
     if (!cookieAccessToken) {
       return {

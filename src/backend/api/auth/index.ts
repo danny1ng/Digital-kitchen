@@ -43,11 +43,10 @@ export const authRoute = new Elysia({ prefix: "/auth" })
       });
       accessToken.set({
         value: accessJWTToken,
-        httpOnly: true,
+        // httpOnly: true,
         maxAge: ACCESS_TOKEN_EXP,
         path: "/",
-        secure: true,
-        sameSite: "lax",
+        // secure: true,
       });
 
       return {
