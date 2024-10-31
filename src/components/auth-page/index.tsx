@@ -3,6 +3,7 @@ import { AuthPage as AuthPageBase } from "@refinedev/antd";
 import type { AuthPageProps } from "@refinedev/core";
 
 export const AuthPage = (props: AuthPageProps) => {
+  console.log("NODE", process.env.NODE_ENV);
   console.log("VERCEL_URL", process.env.VERCEL_URL);
   console.log("VERCEL_BRANCH_URL", process.env.VERCEL_BRANCH_URL);
   console.log(
