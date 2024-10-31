@@ -31,6 +31,7 @@ export type App = typeof app;
  * These are used by Next.js API routes [[...route]].ts
  */
 
+export const maxDuration = 20;
 export const GET = app.handle;
 export const POST = app.handle;
 export const PUT = app.handle;
