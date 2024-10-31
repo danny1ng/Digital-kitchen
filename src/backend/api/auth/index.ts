@@ -47,6 +47,7 @@ export const authRoute = new Elysia({ prefix: "/auth" })
         maxAge: ACCESS_TOKEN_EXP,
         path: "/",
         secure: true,
+        sameSite: "lax",
       });
 
       return {
