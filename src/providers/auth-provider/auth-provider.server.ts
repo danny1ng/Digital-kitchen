@@ -26,7 +26,6 @@ export const authProviderServer = {
           cookieAccessToken?.value || ""
         ),
       },
-      withCredentials: true,
     });
     if (data && roles.includes(data.role)) {
       return {
