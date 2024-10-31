@@ -23,30 +23,31 @@ export const UpdateMenuForm = () => {
   const { mutateAsync, isLoading } = useCustomMutation();
 
   const onFinish: FormProps<FieldType>["onFinish"] = useCallback(
-    (values: FieldType) => console.log(values),
-    // mutateAsync({
-    //   url: `${apiUrl}/fetch/toasttab`,
-    //   method: "post",
-    //   values,
-    //   successNotification: () => {
-    //     return {
-    //       message: `Successfully fetched.`,
-    //       type: "success",
-    //     };
-    //   },
-    //   errorNotification: () => {
-    //     return {
-    //       message: `Something errors on fetching.`,
-    //       type: "error",
-    //     };
-    //   },
-    // }),
+    (values: FieldType) =>
+      mutateAsync({
+        url: `${apiUrl}/fetch/toasttab`,
+        method: "post",
+        values,
+        successNotification: () => {
+          return {
+            message: `Successfully fetched.`,
+            type: "success",
+          };
+        },
+        errorNotification: () => {
+          return {
+            message: `Something errors on fetching.`,
+            type: "error",
+          };
+        },
+      }),
     []
   );
 
   const { selectProps: restaurantSelectProps } = useSelect({
     resource: "restaurants",
     optionLabel: "name",
+    optionValue: "toastGuid",
   });
 
   return (
@@ -58,11 +59,12 @@ export const UpdateMenuForm = () => {
       initialValues={{
         restaurantName: "Jack's Ranche",
         restaurantGuid: "47569b09-1bec-4907-8b03-bc30150e3b2e",
+        fields: ["name", "description", "imageToast", "calories", "basePrice"],
       }}
     >
       <Form.Item
         label={"Restaurant"}
-        name={["restaurantId"]}
+        name={["restaurantGuid"]}
         rules={[
           {
             required: true,
@@ -99,7 +101,7 @@ export const UpdateMenuForm = () => {
               </Checkbox>
             </Col>
             <Col span={8}>
-              <Checkbox value="image" style={{ lineHeight: "32px" }}>
+              <Checkbox value="imageToast" style={{ lineHeight: "32px" }}>
                 Image
               </Checkbox>
             </Col>
@@ -109,7 +111,7 @@ export const UpdateMenuForm = () => {
               </Checkbox>
             </Col>
             <Col span={8}>
-              <Checkbox value="price" style={{ lineHeight: "32px" }}>
+              <Checkbox value="basePrice" style={{ lineHeight: "32px" }}>
                 Price
               </Checkbox>
             </Col>

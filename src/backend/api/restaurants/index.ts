@@ -11,6 +11,12 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
       const restaurants = await prisma.restaurant.findMany({
         orderBy: { name: "asc" },
         where: { id, name: { contains: name_like, mode: "insensitive" } },
+        select: {
+          id: true,
+          name: true,
+          toastGuid: true,
+          toastManagementSetGuid: true,
+        },
       });
 
       return restaurants;
@@ -27,6 +33,12 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
     async ({ params: { id } }) => {
       const restaurant = await prisma.restaurant.findUnique({
         where: { id },
+        select: {
+          id: true,
+          name: true,
+          toastGuid: true,
+          toastManagementSetGuid: true,
+        },
       });
 
       return restaurant;
@@ -42,6 +54,12 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
     async ({ params: { id } }) => {
       const restaurant = await prisma.restaurant.delete({
         where: { id },
+        select: {
+          id: true,
+          name: true,
+          toastGuid: true,
+          toastManagementSetGuid: true,
+        },
       });
 
       return restaurant;
@@ -58,6 +76,12 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
       return await prisma.restaurant.create({
         data: {
           ...data,
+        },
+        select: {
+          id: true,
+          name: true,
+          toastGuid: true,
+          toastManagementSetGuid: true,
         },
       });
     },
@@ -78,6 +102,11 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
           ...data,
         },
         where: { id },
+        select: {
+          name: true,
+          toastGuid: true,
+          toastManagementSetGuid: true,
+        },
       });
     },
     {

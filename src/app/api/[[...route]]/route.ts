@@ -14,11 +14,6 @@ import { menusRoute } from "@backend/api/menus";
  */
 
 const app = createElysia({ prefix: "/api" })
-  .use(
-    logger({
-      autoLogging: true,
-    })
-  )
   .use(authRoute)
   .use(userRoute)
   .use(eventsRoute)

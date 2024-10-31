@@ -77,7 +77,7 @@ model MenuGroup {
 
 model MenuItem {
   id              String     @id @default(uuid())
-  guid            String?    @unique
+  guid            String?
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   name            String

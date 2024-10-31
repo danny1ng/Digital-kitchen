@@ -1,227 +1,170 @@
 import Elysia, { t } from "elysia";
 
 import prisma from "@backend/lib/prisma";
-import { ToastService } from "@backend/services/fetch-toast-tab-kitchen/toast-service";
+import {
+  MenusToast,
+  ToastService,
+} from "@backend/services/fetch-toast-tab-kitchen/toast-service";
 import { menus } from "./mock";
 import { isRoles } from "../auth/is-role";
+
+const getFilteredItem = ({
+  fields,
+  item,
+}: {
+  fields: string[] | null;
+  item: any;
+}) =>
+  fields?.length === 0
+    ? item // Include all fields if supportedFields is empty
+    : Object.fromEntries(
+        Object.entries(item).filter(([key]) => fields?.includes(key as any))
+      );
+
+const fetchKitchen = async ({
+  toastToken,
+  restaurantGuid,
+  restaurantName,
+  fields = [],
+  menus,
+}: {
+  menus: MenusToast[];
+  fields?:
+    | ("name" | "description" | "imageToast" | "calories" | "basePrice")[]
+    | null;
+  restaurantName?: string | null | undefined;
+  restaurantGuid: string;
+  toastToken: string;
+}) => {
+  await prisma.$transaction(
+    async (tx) => {
+      // Упрощенный upsert для ресторана
+      const restaurant = await tx.restaurant.upsert({
+        where: { toastGuid: restaurantGuid },
+        include: { menu: true },
+        update: { toastToken: toastToken },
+        create: {
+          name: restaurantName || "",
+          toastGuid: restaurantGuid,
+        },
+      });
+
+      for (const menu of menus) {
+        const menuPrisma = await tx.menu.upsert({
+          where: { guid: menu.guid },
+          create: {
+            name: menu.name,
+            guid: menu.guid,
+            restaurantId: restaurant.id,
+          },
+          update: { name: menu.name },
+        });
+
+        // Обработка групп меню
+        const groupPromises = menu.groups.map(async (group) => {
+          const menuGroupPrisma = await tx.menuGroup.upsert({
+            where: { guid: group.guid },
+            create: {
+              name: group.name,
+              guid: group.guid,
+              menuId: menuPrisma.id,
+            },
+            update: { name: group.name },
+          });
+
+          // Собираем операции создания элементов меню
+          const itemPromises = group.items.map(async (item) => {
+            const existingItem = await tx.menuItem.findFirst({
+              where: { guid: item.guid, menuGroupId: menuGroupPrisma.id },
+            });
+
+            if (existingItem) {
+              const filteredItem = getFilteredItem({
+                item: {
+                  name: item.name,
+                  description: item.description,
+                  calories: item.calories,
+                  basePrice: item.pricing.basePrice,
+                  imageToast: item.imagePath,
+                },
+                fields,
+              });
+              return tx.menuItem.update({
+                where: { id: existingItem.id },
+                data: filteredItem,
+              });
+            } else {
+              return tx.menuItem.create({
+                data: {
+                  name: item.name,
+                  guid: item.guid,
+                  description: item.description,
+                  calories: item.calories,
+                  basePrice: item.pricing.basePrice,
+                  imageToast: item.imagePath,
+                  menuGroupId: menuGroupPrisma.id,
+                },
+              });
+            }
+          });
+
+          await Promise.all(itemPromises);
+        });
+
+        await Promise.all(groupPromises);
+      }
+    },
+    { timeout: 30000 }
+  );
+};
 
 export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
   .use(isRoles(["ADMIN"]))
   .post(
     "/toasttab",
-    async ({ body: { toastToken, restaurantGuid, restaurantName } }) => {
-      // const managementSetGuid = await ToastService.FetchManagementSetGuid(
-      //   toastToken,
-      //   restaurantGuid
-      // );
-      // FIXME: remove mock
-      // const toastService = new ToastService(
-      //   toastToken,
-      //   restaurantGuid,
-      //   managementSetGuid as string
-      // );
-      // const menus = await toastService.fetchAllMenuFromToast();
+    async ({
+      body: { toastToken, restaurantGuid, restaurantName, fields = [] },
+    }) => {
+      const managementSetGuid = await ToastService.FetchManagementSetGuid(
+        toastToken,
+        restaurantGuid
+      );
 
-      await prisma.restaurant.upsert({
-        where: { toastGuid: restaurantGuid },
-        include: {
-          menu: {
-            include: {
-              items: {
-                include: {
-                  items: true,
-                },
-              },
-            },
-          },
-        },
-        update: {
-          toastToken: toastToken,
-          menu: {
-            upsert: menus.map((menu) => ({
-              update: {
-                items: {
-                  upsert: menu.groups.map((group) => ({
-                    update: {
-                      items: {
-                        connectOrCreate: group.items.map((item) => ({
-                          create: {
-                            name: item.name,
-                            guid: item.guid,
-                            description: item.description,
-                            calories: item.calories,
-                            basePrice: item.pricing.basePrice,
-                            imageToast: item.imagePath,
-                          },
-                          where: {
-                            guid: item.guid,
-                          },
-                        })),
-                      },
-                    },
-                    create: {
-                      name: group.name,
-                      guid: group.guid,
-                      items: {
-                        connectOrCreate: group.items.map((item) => ({
-                          create: {
-                            name: item.name,
-                            guid: item.guid,
-                            description: item.description,
-                            calories: item.calories,
-                            basePrice: item.pricing.basePrice,
-                            imageToast: item.imagePath,
-                          },
-                          where: {
-                            guid: item.guid,
-                          },
-                        })),
-                      },
-                    },
-                    where: {
-                      guid: group.guid,
-                    },
-                  })),
-                },
-              },
-              where: { guid: menu.guid },
-              create: {
-                name: menu.name,
-                guid: menu.guid,
-                items: {
-                  connectOrCreate: menu.groups.map((group) => ({
-                    create: {
-                      name: group.name,
-                      guid: group.guid,
-                      items: {
-                        connectOrCreate: group.items.map((item) => ({
-                          create: {
-                            name: item.name,
-                            guid: item.guid,
-                            description: item.description,
-                            calories: item.calories,
-                            basePrice: item.pricing.basePrice,
-                            imageToast: item.imagePath,
-                          },
-                          where: {
-                            guid: item.guid,
-                          },
-                        })),
-                      },
-                    },
-                    where: {
-                      guid: group.guid,
-                    },
-                  })),
-                },
-              },
-            })),
-          },
-        },
-        create: {
-          name: restaurantName,
-          // toastToken,
-          // toastManagementSetGuid: managementSetGuid,
-          toastGuid: restaurantGuid,
-          menu: {
-            connectOrCreate: menus.map((menu) => ({
-              create: {
-                name: menu.name,
-                guid: menu.guid,
-                items: {
-                  connectOrCreate: menu.groups.map((group) => ({
-                    create: {
-                      name: group.name,
-                      guid: group.guid,
-                      items: {
-                        connectOrCreate: group.items
-                          .map((item) => ({
-                            create: {
-                              name: item.name,
-                              guid: item.guid,
-                            },
-                            where: {
-                              guid: item.guid,
-                            },
-                          }))
-                          .slice(0, 30),
-                      },
-                    },
-                    where: {
-                      guid: group.guid,
-                    },
-                  })),
-                },
-              },
-              where: {
-                guid: menu.guid,
-              },
-            })),
-          },
-        },
+      const toastService = new ToastService(
+        toastToken,
+        restaurantGuid,
+        managementSetGuid as string
+      );
+      const menus = await toastService.fetchAllMenuFromToast();
+
+      await fetchKitchen({
+        menus: menus as any,
+        toastToken,
+        restaurantGuid,
+        restaurantName,
+        fields,
       });
 
-      // const restaurantFound = await prisma.restaurant
-      //   .findUnique({
-      //     where: { toastGuid: restaurantGuid },
-      //   })
-      //   .catch(() => null);
-
-      // if (restaurantFound) {
-      //   restaurant = await prisma.restaurant.update({
-      //     where: { toastGuid: restaurantGuid },
-      //     data: {
-      //       name: restaurantName,
-      //       toastToken: toastToken,
-      //       toastManagementSetGuid: managementSetGuid,
-      //       toastGuid: restaurantGuid,
-      //     },
-      //   });
-      // } else {
-      //   restaurant = await prisma.restaurant.create({
-      //     data: {
-      //       name: restaurantName,
-      //       toastToken: toastToken,
-      //       toastManagementSetGuid: managementSetGuid,
-      //       toastGuid: restaurantGuid,
-      //     },
-      //   });
-      // }
-      // restaurant = await DbHelper.CreateRestaurant(roleId, restaurantName, restaurantGuid, toastToken, managementSetGuid);
-      // } else {
-      // if (toastToken) {
-      // await DbHelper.SaveToastToken(roleId, restaurantGuid, toastToken);
-      // }
-      // restaurant = await DbHelper.GetRestaurantByGuid(roleId, restaurantGuid);
-      // }
-
-      // const formattedMenu = menus.map((menu) => {
-      //   return {
-      //     name: menu.name,
-      //     guid: menu.guid,
-      //   };
-      // });
-
-      // const menusData = prisma.menu.upse({
-      //   data: formattedMenu,
-      // });
-
-      // await prisma.$transaction([menusData]);
-
-      // await prisma.$disconnect();
-
-      // if (type === OperationType.Create) {
-      // return DbHelper.SaveAllMenu(roleId, fields, restaurant.restaurantId, menus);
-      // } else {
-      // return DbHelper.UpdateMenu(roleId, fields, restaurant.restaurantId, menus);
-      // }
       return { message: "success" };
     },
     {
       body: t.Object({
-        restaurantName: t.String(),
+        restaurantName: t.Optional(t.MaybeEmpty(t.String())),
         toastToken: t.String(),
         restaurantGuid: t.String(),
+        fields: t.Optional(
+          t.MaybeEmpty(
+            t.Array(
+              t.Union([
+                t.Literal("name"),
+                t.Literal("description"),
+                t.Literal("imageToast"),
+                t.Literal("calories"),
+                t.Literal("basePrice"),
+              ])
+            )
+          )
+        ),
       }),
     }
   );
