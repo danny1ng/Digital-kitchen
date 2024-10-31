@@ -24,9 +24,9 @@ export const ImportForm = () => {
             type: "success",
           };
         },
-        errorNotification: () => {
+        errorNotification: (e) => {
           return {
-            message: `Something errors on fetching.`,
+            message: e?.message || `Something errors on fetching.`,
             type: "error",
           };
         },

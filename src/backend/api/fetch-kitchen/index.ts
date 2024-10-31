@@ -27,6 +27,7 @@ const fetchKitchen = async ({
   restaurantName,
   fields = [],
   menus,
+  managementSetGuid,
 }: {
   menus: MenusToast[];
   fields?:
@@ -35,6 +36,7 @@ const fetchKitchen = async ({
   restaurantName?: string | null | undefined;
   restaurantGuid: string;
   toastToken: string;
+  managementSetGuid: string;
 }) => {
   await prisma.$transaction(
     async (tx) => {
@@ -42,10 +44,15 @@ const fetchKitchen = async ({
       const restaurant = await tx.restaurant.upsert({
         where: { toastGuid: restaurantGuid },
         include: { menu: true },
-        update: { toastToken: toastToken },
+        update: {
+          toastToken: toastToken,
+          toastManagementSetGuid: managementSetGuid,
+        },
         create: {
           name: restaurantName || "",
           toastGuid: restaurantGuid,
+          toastToken,
+          toastManagementSetGuid: managementSetGuid,
         },
       });
 
@@ -133,7 +140,7 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
       const toastService = new ToastService(
         toastToken,
         restaurantGuid,
-        managementSetGuid as string
+        managementSetGuid
       );
       const menus = await toastService.fetchAllMenuFromToast();
 
@@ -143,6 +150,7 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
         restaurantGuid,
         restaurantName,
         fields,
+        managementSetGuid,
       });
 
       return { message: "success" };

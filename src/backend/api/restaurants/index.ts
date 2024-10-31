@@ -16,6 +16,7 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
           name: true,
           toastGuid: true,
           toastManagementSetGuid: true,
+          toastToken: true,
         },
       });
 
@@ -38,6 +39,7 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
           name: true,
           toastGuid: true,
           toastManagementSetGuid: true,
+          toastToken: true,
         },
       });
 
@@ -59,6 +61,7 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
           name: true,
           toastGuid: true,
           toastManagementSetGuid: true,
+          toastToken: true,
         },
       });
 
@@ -82,6 +85,7 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
           name: true,
           toastGuid: true,
           toastManagementSetGuid: true,
+          toastToken: true,
         },
       });
     },
@@ -106,6 +110,7 @@ export const restaurantsRoute = new Elysia({ prefix: "/restaurants" })
           name: true,
           toastGuid: true,
           toastManagementSetGuid: true,
+          toastToken: true,
         },
       });
     },

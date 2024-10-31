@@ -1,3 +1,4 @@
+import { Restaurant } from "@prisma/client";
 import { useSelect } from "@refinedev/antd";
 import { useApiUrl, useCustomMutation } from "@refinedev/core";
 import {
@@ -19,6 +20,7 @@ type FieldType = {
 };
 
 export const UpdateMenuForm = () => {
+  const [form] = Form.useForm();
   const apiUrl = useApiUrl();
   const { mutateAsync, isLoading } = useCustomMutation();
 
@@ -34,9 +36,9 @@ export const UpdateMenuForm = () => {
             type: "success",
           };
         },
-        errorNotification: () => {
+        errorNotification: (e) => {
           return {
-            message: `Something errors on fetching.`,
+            message: e?.message || `Something errors on fetching.`,
             type: "error",
           };
         },
@@ -44,21 +46,30 @@ export const UpdateMenuForm = () => {
     []
   );
 
-  const { selectProps: restaurantSelectProps } = useSelect({
+  const {
+    selectProps: restaurantSelectProps,
+    query: { data },
+  } = useSelect<Restaurant>({
     resource: "restaurants",
     optionLabel: "name",
     optionValue: "toastGuid",
   });
 
+  const onGenderChange = (value: string) => {
+    const token = data?.data.find(
+      (item) => item.toastGuid === value
+    )?.toastToken;
+    form.setFieldsValue({ toastToken: token });
+  };
+
   return (
     <Form
+      form={form}
       onFinish={onFinish}
       autoComplete="off"
       layout="vertical"
       size="large"
       initialValues={{
-        restaurantName: "Jack's Ranche",
-        restaurantGuid: "47569b09-1bec-4907-8b03-bc30150e3b2e",
         fields: ["name", "description", "imageToast", "calories", "basePrice"],
       }}
     >
@@ -75,6 +86,10 @@ export const UpdateMenuForm = () => {
           {...restaurantSelectProps}
           onBlur={() => restaurantSelectProps?.onSearch?.("")}
           allowClear
+          onChange={(values, options) => {
+            restaurantSelectProps?.onChange?.(values, options);
+            onGenderChange(values as any);
+          }}
         />
       </Form.Item>
 
