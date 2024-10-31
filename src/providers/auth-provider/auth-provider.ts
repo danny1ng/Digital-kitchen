@@ -76,19 +76,19 @@ export const authProvider: AuthProvider = {
     };
   },
   check: async () => {
-    const res = await fetch(API_URL + "/user/me", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const user = await res.json();
+    // const res = await fetch(API_URL + "/user/me", {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // });
+    // const user = await res.json();
 
-    if (res.ok && user) {
-      return {
-        authenticated: true,
-      };
-    }
+    // if (res.ok && user) {
+    //   return {
+    //     authenticated: true,
+    //   };
+    // }
 
     return {
       authenticated: false,
@@ -105,17 +105,17 @@ export const authProvider: AuthProvider = {
     return null;
   },
   getIdentity: async () => {
-    const res = await fetch(API_URL + "/user/me", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const user = await res.json();
+    // const res = await fetch(API_URL + "/user/me", {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // });
+    // const user = await res.json();
 
-    if (res.ok && user) {
-      return user;
-    }
+    // if (res.ok && user) {
+    //   return user;
+    // }
 
     return null;
   },

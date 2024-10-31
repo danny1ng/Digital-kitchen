@@ -18,15 +18,6 @@ export const authProviderServer = {
       };
     }
 
-    console.log("🚀 ~ check: ~ API_URL + /user/me:", API_URL + "/user/me");
-    console.log(
-      "coosk",
-      cookie.serialize(
-        cookieAccessToken?.name || "",
-        cookieAccessToken?.value || ""
-      )
-    );
-
     const { data } = await axios(API_URL + "/user/me", {
       headers: {
         "Content-Type": "application/json",
