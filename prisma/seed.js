@@ -14,6 +14,7 @@ async function main() {
       password: hashedPassword,
     },
   ];
+  console.log("🚀 ~ main ~ userData:", userData)
 
   console.log("Start seeding ...");
   for (const u of userData) {
