@@ -1,6 +1,6 @@
 {
     "functions": {
-      "app/api/fetch/**": {
+      "src/app/api/fetch/**": {
         "maxDuration": 20 
       }
     }
