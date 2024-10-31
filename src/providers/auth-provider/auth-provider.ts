@@ -1,20 +1,18 @@
 "use client";
 
+import { API_URL } from "@constants";
 import type { AuthProvider } from "@refinedev/core";
 
 export const authProvider: AuthProvider = {
   login: async ({ email, username, password, remember }) => {
     // Suppose we actually send a request to the back end here.
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/sign-in",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      }
-    );
+    const res = await fetch(API_URL + "/auth/sign-in", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
     const user = await res.json();
 
     if (res.ok && user) {
@@ -69,19 +67,16 @@ export const authProvider: AuthProvider = {
   //   };
   // },
   logout: async () => {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_API_BASE_URL + "/auth/logout",
-      {
-        method: "POST",
-      }
-    );
+    const res = await fetch(API_URL + "/auth/logout", {
+      method: "POST",
+    });
     return {
       success: true,
       redirectTo: "/login",
     };
   },
   check: async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/user/me", {
+    const res = await fetch(API_URL + "/user/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -110,7 +105,7 @@ export const authProvider: AuthProvider = {
     return null;
   },
   getIdentity: async () => {
-    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + "/user/me", {
+    const res = await fetch(API_URL + "/user/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
