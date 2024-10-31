@@ -6,7 +6,9 @@ import { jwtSetup } from "./jwt";
 export const isAuthenticated = new Elysia({ name: "jwt-auth" })
   .use(jwtSetup)
   .derive(async ({ error, cookie: { accessToken }, jwt }) => {
+    console.log("🚀 ~ .derive ~ accessToken:", accessToken.cookie);
     const token = await jwt.verify((accessToken.cookie.value as string) || "");
+    console.log("🚀 ~ .derive ~ token:", token);
 
     if (!token) {
       accessToken.remove();
@@ -23,6 +25,7 @@ export const isAuthenticated = new Elysia({ name: "jwt-auth" })
         role: true,
       },
     });
+    console.log("🚀 ~ .derive ~ user:", user);
 
     if (!user) {
       accessToken.remove();
