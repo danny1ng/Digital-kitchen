@@ -1,12 +1,12 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-// import * as bcrypt from "bcrypt";
+import * as argon2 from "argon2";
 
 const prisma = new PrismaClient();
 
 const password = "123123123";
 
 async function main() {
-  const hashedPassword = await Bun.password.hash(password);
+  const hashedPassword = await argon2.hash(password);
 
   const userData = [
     {
