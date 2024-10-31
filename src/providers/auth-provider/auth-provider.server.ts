@@ -18,16 +18,15 @@ export const authProviderServer = {
         redirectTo: "/login",
       };
     }
-
-    const { data } = await axios(API_URL + "/user/me", {
+    console.log("axios start");
+    const res = await fetch(API_URL + "/user/me", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-        cookie: cookie.serialize(
-          cookieAccessToken?.name || "",
-          cookieAccessToken?.value || ""
-        ),
       },
     });
+    const data = await res.json();
+
     console.log("🚀 ~ check: ~ data:", data);
     if (data && roles.includes(data.role)) {
       return {
