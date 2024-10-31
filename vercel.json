@@ -1,6 +1,6 @@
 {
     "functions": {
-      "app/api/fetch/toasttab": {
+      "app/api/fetch/**": {
         "maxDuration": 20 
       }
     }
