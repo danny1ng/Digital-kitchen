@@ -21,8 +21,12 @@ export const authProviderServer = {
     console.log("axios start");
     const res = await fetch(API_URL + "/user/me", {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
+        Cookie: cookieAccessToken
+          ? `${cookieAccessToken.name}=${cookieAccessToken.value}`
+          : "",
       },
     });
     const data = await res.json();
