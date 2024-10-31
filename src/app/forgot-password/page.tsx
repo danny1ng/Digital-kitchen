@@ -13,7 +13,9 @@ export default async function ForgotPassword() {
 }
 
 async function getData() {
-  const { authenticated, redirectTo, error } = await authProviderServer.check();
+  const { authenticated, redirectTo, error } = await authProviderServer.check({
+    roles: ["ADMIN", "USER"],
+  });
 
   return {
     authenticated,
