@@ -30,6 +30,7 @@ export type App = typeof app;
  * Export handlers for different HTTP methods
  * These are used by Next.js API routes [[...route]].ts
  */
+
 export const GET = app.handle;
 export const POST = app.handle;
 export const PUT = app.handle;
