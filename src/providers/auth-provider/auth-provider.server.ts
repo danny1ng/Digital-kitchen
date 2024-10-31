@@ -27,6 +27,7 @@ export const authProviderServer = {
         ),
       },
     });
+    console.log("🚀 ~ check: ~ data:", data);
     if (data && roles.includes(data.role)) {
       return {
         authenticated: true,
