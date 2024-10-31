@@ -4,4 +4,4 @@ const url =
   process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
     ? process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
     : process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL;
-export const API_URL = `${process.env.NEXT_PUBLIC_PROTOCOL}://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}/api`;
+export const API_URL = `${process.env.NEXT_PUBLIC_PROTOCOL}://${url}/api`;
