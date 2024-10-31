@@ -9,7 +9,6 @@ export const authProviderServer = {
   check: async ({ roles }: { roles: Role[] }) => {
     const cookieStore = cookies();
     const cookieAccessToken = cookieStore.get("accessToken");
-    console.log("🚀 ~ check: ~ cookieAccessToken:", cookieAccessToken);
 
     if (!cookieAccessToken) {
       return {
@@ -18,9 +17,9 @@ export const authProviderServer = {
         redirectTo: "/login",
       };
     }
-    console.log("axios start");
     const { data } = await axios
       .get(API_URL + "/user/me", {
+        baseURL: "",
         headers: {
           "Content-Type": "application/json",
           Cookie: cookieAccessToken
@@ -33,7 +32,6 @@ export const authProviderServer = {
         return { data: null };
       });
 
-    console.log("🚀 ~ check: ~ data:", data);
     if (data && roles.includes(data.role)) {
       return {
         authenticated: true,
