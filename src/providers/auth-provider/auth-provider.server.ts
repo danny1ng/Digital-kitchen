@@ -19,17 +19,19 @@ export const authProviderServer = {
       };
     }
     console.log("axios start");
-    const res = await fetch(API_URL + "/user/me", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieAccessToken
-          ? `${cookieAccessToken.name}=${cookieAccessToken.value}`
-          : "",
-      },
-    });
-    const data = await res.json();
+    const { data } = await axios
+      .get(API_URL + "/user/me", {
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieAccessToken
+            ? `${cookieAccessToken.name}=${cookieAccessToken.value}`
+            : "",
+        },
+      })
+      .catch((e) => {
+        console.log(e);
+        return { data: null };
+      });
 
     console.log("🚀 ~ check: ~ data:", data);
     if (data && roles.includes(data.role)) {
