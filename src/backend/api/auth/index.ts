@@ -3,7 +3,7 @@ import { getExpTimestamp } from "@lib/get-exp-timestamp";
 import { ACCESS_TOKEN_EXP } from "@constants";
 import prisma from "@backend/lib/prisma";
 import { jwtSetup } from "./jwt";
-import * as argon2 from "argon2";
+import * as bcrypt from "bcrypt";
 
 export const authRoute = new Elysia({ prefix: "/auth" })
   .use(jwtSetup)
@@ -25,7 +25,7 @@ export const authRoute = new Elysia({ prefix: "/auth" })
           "The email address or password you entered is incorrect"
         );
       }
-      const matchPassword = await argon2.verify(
+      const matchPassword = await bcrypt.compare(
         body.password.trim(),
         user.password
       );
