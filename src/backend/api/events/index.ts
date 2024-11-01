@@ -2,7 +2,6 @@ import Elysia, { t } from "elysia";
 
 import prisma from "@backend/lib/prisma";
 import { isAuthenticated } from "../auth/is-authenticated";
-import { Event, Prisma } from "@prisma/client";
 
 export const eventsRoute = new Elysia({ prefix: "/events" })
   .use(isAuthenticated)

@@ -90,7 +90,6 @@ model MenuItem {
   minPrice        Float?
   inheritPricing  Boolean?
   pricingStrategy String?
-  imageToast      String?
   menuGroup       MenuGroup? @relation(fields: [menuGroupId], references: [id])
   menuGroupId     String?
 }

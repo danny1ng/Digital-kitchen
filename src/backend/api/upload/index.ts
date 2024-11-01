@@ -8,7 +8,6 @@ export const uploadRoute = new Elysia({ prefix: "/upload" })
   .post(
     "/media",
     async ({ body: { file } }) => {
-      console.log("🚀 ~ file:", file);
       try {
         const blob = await put(file.name, file, {
           access: "public",

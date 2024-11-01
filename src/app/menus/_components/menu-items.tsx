@@ -1,18 +1,11 @@
-import {
-  Button,
-  Collapse,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Space,
-  Upload,
-} from "antd";
+import { Button, Collapse, Flex, Form, Input, InputNumber, Upload } from "antd";
 
 import { CloseOutlined } from "@ant-design/icons";
 import { getValueFromEvent } from "@refinedev/antd";
+import { useApiUrl } from "@refinedev/core";
 
 export const MenuItems = ({ name }: { name: number }) => {
+  const apiUrl = useApiUrl();
   return (
     <Form.Item label="Items">
       <Form.List name={[name, "items"]}>
@@ -77,8 +70,10 @@ export const MenuItems = ({ name }: { name: number }) => {
                           ]}
                         >
                           <Upload.Dragger
-                            listType="picture"
-                            beforeUpload={() => false}
+                            listType="picture-card"
+                            action={`${apiUrl}/upload/media`}
+                            multiple={false}
+                            maxCount={1}
                           >
                             <p className="ant-upload-text">
                               Drag & drop a file in this area
@@ -100,19 +95,6 @@ export const MenuItems = ({ name }: { name: number }) => {
                           style={{ width: "50%" }}
                         >
                           <InputNumber style={{ width: "100%" }} />
-                        </Form.Item>
-                        <Form.Item
-                          name={[subField.name, "imageToast"]}
-                          label="Image Toast"
-                          style={{ width: "50%" }}
-                          rules={[
-                            {
-                              required: false,
-                              whitespace: true,
-                            },
-                          ]}
-                        >
-                          <Input style={{ width: "100%" }} />
                         </Form.Item>
                       </Flex>
                     </>

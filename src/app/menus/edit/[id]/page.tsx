@@ -1,19 +1,10 @@
 "use client";
 
 import { MenusGroup } from "@app/menus/_components/menus";
-import { Event, Restaurant } from "@prisma/client";
+import { Menu, MenuGroup, MenuItem } from "@prisma/client";
 import { Edit, useForm, useSelect } from "@refinedev/antd";
 
-import {
-  DatePicker,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  TimePicker,
-} from "antd";
-import dayjs from "dayjs";
+import { Flex, Form, Input, InputNumber, Select } from "antd";
 import { useCallback } from "react";
 
 export default function MenuEdit() {
@@ -21,7 +12,23 @@ export default function MenuEdit() {
     formProps,
     saveButtonProps,
     query: queryResult,
-  } = useForm<Event & { restaurants: string[] }>();
+  } = useForm<Menu & { items: (MenuGroup & { items: MenuItem[] })[] }>({
+    queryOptions: {
+      select: ({ data }) =>
+        ({
+          data: {
+            ...data,
+            items: data.items.map((group) => ({
+              ...group,
+              items: group.items.map((menuItem) => ({
+                ...menuItem,
+                image: menuItem.image ? [{ thumbUrl: menuItem.image }] : [],
+              })),
+            })),
+          },
+        } as any),
+    },
+  });
 
   const data = queryResult?.data?.data;
 
@@ -30,10 +37,23 @@ export default function MenuEdit() {
     optionLabel: "name",
     defaultValue: data?.restaurantId || "",
   });
+  const onFinish = useCallback((values: any) => {
+    const formattedValues = {
+      ...values,
+      items: values.items.map((group: any) => ({
+        ...group,
+        items: group.items.map((menuItem: any) => ({
+          ...menuItem,
+          image: menuItem?.image?.[0]?.response,
+        })),
+      })),
+    };
+    return formProps?.onFinish?.(formattedValues);
+  }, []);
 
   return (
     <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical" size="large">
+      <Form {...formProps} layout="vertical" size="large" onFinish={onFinish}>
         <Form.Item
           label="Name"
           name={["name"]}

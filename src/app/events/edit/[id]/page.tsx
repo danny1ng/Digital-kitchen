@@ -1,6 +1,6 @@
 "use client";
 
-import { Event, Restaurant } from "@prisma/client";
+import { Event } from "@prisma/client";
 import { Edit, getValueFromEvent, useForm, useSelect } from "@refinedev/antd";
 import { useApiUrl } from "@refinedev/core";
 
@@ -25,7 +25,10 @@ export default function RestaurantEdit() {
     queryOptions: {
       select: ({ data }) =>
         ({
-          data: { ...data, banner: [{ thumbUrl: data.banner }] },
+          data: {
+            ...data,
+            banner: data.banner ? [{ thumbUrl: data.banner }] : [],
+          },
         } as any),
     },
   });

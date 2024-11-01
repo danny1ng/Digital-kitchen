@@ -70,7 +70,7 @@ export const UpdateMenuForm = () => {
       layout="vertical"
       size="large"
       initialValues={{
-        fields: ["name", "description", "imageToast", "calories", "basePrice"],
+        fields: ["name", "description", "image", "calories", "basePrice"],
       }}
     >
       <Form.Item
@@ -116,7 +116,7 @@ export const UpdateMenuForm = () => {
               </Checkbox>
             </Col>
             <Col span={8}>
-              <Checkbox value="imageToast" style={{ lineHeight: "32px" }}>
+              <Checkbox value="image" style={{ lineHeight: "32px" }}>
                 Image
               </Checkbox>
             </Col>

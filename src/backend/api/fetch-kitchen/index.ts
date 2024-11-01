@@ -31,7 +31,7 @@ const fetchKitchen = async ({
 }: {
   menus: MenusToast[];
   fields?:
-    | ("name" | "description" | "imageToast" | "calories" | "basePrice")[]
+    | ("name" | "description" | "image" | "calories" | "basePrice")[]
     | null;
   restaurantName?: string | null | undefined;
   restaurantGuid: string;
@@ -92,7 +92,7 @@ const fetchKitchen = async ({
                   description: item.description,
                   calories: item.calories,
                   basePrice: item.pricing.basePrice,
-                  imageToast: item.imagePath,
+                  image: item.imagePath,
                 },
                 fields,
               });
@@ -108,7 +108,7 @@ const fetchKitchen = async ({
                   description: item.description,
                   calories: item.calories,
                   basePrice: item.pricing.basePrice,
-                  imageToast: item.imagePath,
+                  image: item.imagePath,
                   menuGroupId: menuGroupPrisma.id,
                 },
               });
@@ -166,7 +166,7 @@ export const fetchKitchenRoute = new Elysia({ prefix: "/fetch" })
               t.Union([
                 t.Literal("name"),
                 t.Literal("description"),
-                t.Literal("imageToast"),
+                t.Literal("image"),
                 t.Literal("calories"),
                 t.Literal("basePrice"),
               ])
