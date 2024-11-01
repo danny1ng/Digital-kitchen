@@ -25,7 +25,7 @@ export default function EventsList() {
       <Table {...tableProps} rowKey="id">
         <Table.Column
           dataIndex={["banner"]}
-          title={"Created at"}
+          title={"Banner"}
           render={(value: any) => (
             <ImageField
               preview={false}
