@@ -26,13 +26,15 @@ export default function EventsList() {
         <Table.Column
           dataIndex={["banner"]}
           title={"Banner"}
-          render={(value: any) => (
-            <ImageField
-              preview={false}
-              value={value}
-              style={{ width: 32, height: 32, borderRadius: "100%" }}
-            />
-          )}
+          render={(value: any) =>
+            value && (
+              <ImageField
+                preview={false}
+                value={value}
+                style={{ width: 32, height: 32, borderRadius: "100%" }}
+              />
+            )
+          }
         />
         <Table.Column dataIndex="title" title={"Title"} />
         <Table.Column
