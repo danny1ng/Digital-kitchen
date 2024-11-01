@@ -1,9 +1,18 @@
 "use client";
 
 import { Event, Restaurant } from "@prisma/client";
-import { Edit, useForm, useSelect } from "@refinedev/antd";
+import { Edit, getValueFromEvent, useForm, useSelect } from "@refinedev/antd";
+import { useApiUrl } from "@refinedev/core";
 
-import { DatePicker, Flex, Form, Input, Select, TimePicker } from "antd";
+import {
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  Select,
+  TimePicker,
+  Upload,
+} from "antd";
 import dayjs from "dayjs";
 import { useCallback } from "react";
 
@@ -12,7 +21,16 @@ export default function RestaurantEdit() {
     formProps,
     saveButtonProps,
     query: queryResult,
-  } = useForm<Event & { restaurants: string[] }>();
+  } = useForm<Event & { restaurants: string[] }>({
+    queryOptions: {
+      select: ({ data }) =>
+        ({
+          data: { ...data, banner: [{ thumbUrl: data.banner }] },
+        } as any),
+    },
+  });
+
+  const apiUrl = useApiUrl();
 
   const data = queryResult?.data?.data;
 
@@ -22,9 +40,14 @@ export default function RestaurantEdit() {
     defaultValue: data?.restaurantId || "",
   });
 
+  const onFinish = useCallback(({ banner, ...values }: any) => {
+    const formattedBanner = banner?.[0]?.response;
+    return formProps?.onFinish?.({ ...values, banner: formattedBanner });
+  }, []);
+
   return (
     <Edit saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+      <Form {...formProps} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label={"Title"}
           name={["title"]}
@@ -98,6 +121,24 @@ export default function RestaurantEdit() {
             onBlur={() => restaurantSelectProps?.onSearch?.("")}
             allowClear
           />
+        </Form.Item>
+        <Form.Item label="Image">
+          <Form.Item
+            name="banner"
+            valuePropName="fileList"
+            getValueFromEvent={getValueFromEvent}
+            noStyle
+          >
+            <Upload.Dragger
+              name="file"
+              action={`${apiUrl}/upload/media`}
+              listType="picture-card"
+              multiple={false}
+              maxCount={1}
+            >
+              <p className="ant-upload-text">Drag & drop a file in this area</p>
+            </Upload.Dragger>
+          </Form.Item>
         </Form.Item>
       </Form>
     </Edit>

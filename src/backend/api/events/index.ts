@@ -70,6 +70,7 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
     {
       body: t.Object({
         title: t.String(),
+        banner: t.String(),
         description: t.String(),
         date: t.Date(),
         time: t.Optional(t.String()),
@@ -93,6 +94,7 @@ export const eventsRoute = new Elysia({ prefix: "/events" })
         title: t.String(),
         description: t.String(),
         date: t.Date(),
+        banner: t.String(),
         time: t.Optional(t.String()),
         restaurantId: t.Optional(t.String()),
       }),

@@ -5,6 +5,7 @@ import {
   DateField,
   DeleteButton,
   EditButton,
+  ImageField,
   List,
   useTable,
 } from "@refinedev/antd";
@@ -22,6 +23,17 @@ export default function EventsList() {
   return (
     <List>
       <Table {...tableProps} rowKey="id">
+        <Table.Column
+          dataIndex={["banner"]}
+          title={"Created at"}
+          render={(value: any) => (
+            <ImageField
+              preview={false}
+              value={value}
+              style={{ width: 32, height: 32, borderRadius: "100%" }}
+            />
+          )}
+        />
         <Table.Column dataIndex="title" title={"Title"} />
         <Table.Column
           dataIndex="description"

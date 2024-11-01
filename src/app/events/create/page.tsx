@@ -1,9 +1,20 @@
 "use client";
 
-import { Create, useForm, useSelect } from "@refinedev/antd";
-import { Flex, Form, Input, Select, DatePicker, TimePicker } from "antd";
+import { Create, getValueFromEvent, useForm, useSelect } from "@refinedev/antd";
+import { useApiUrl } from "@refinedev/core";
+import {
+  Flex,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  TimePicker,
+  Upload,
+} from "antd";
+import { useCallback } from "react";
 
 export default function EventCreate() {
+  const apiUrl = useApiUrl();
   const { formProps, saveButtonProps } = useForm({});
 
   const { selectProps: restaurantSelectProps } = useSelect({
@@ -11,9 +22,14 @@ export default function EventCreate() {
     optionLabel: "name",
   });
 
+  const onFinish = useCallback(({ banner, ...values }: any) => {
+    const formattedBanner = banner?.[0]?.response;
+    return formProps?.onFinish?.({ ...values, banner: formattedBanner });
+  }, []);
+
   return (
     <Create saveButtonProps={saveButtonProps}>
-      <Form {...formProps} layout="vertical">
+      <Form {...formProps} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label={"Title"}
           name={["title"]}
@@ -72,6 +88,24 @@ export default function EventCreate() {
           ]}
         >
           <Select {...restaurantSelectProps} allowClear />
+        </Form.Item>
+        <Form.Item label="Image">
+          <Form.Item
+            name="banner"
+            valuePropName="fileList"
+            getValueFromEvent={getValueFromEvent}
+            noStyle
+          >
+            <Upload.Dragger
+              name="file"
+              action={`${apiUrl}/upload/media`}
+              listType="picture-card"
+              multiple={false}
+              maxCount={1}
+            >
+              <p className="ant-upload-text">Drag & drop a file in this area</p>
+            </Upload.Dragger>
+          </Form.Item>
         </Form.Item>
       </Form>
     </Create>

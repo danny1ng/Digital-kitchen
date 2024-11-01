@@ -2,11 +2,11 @@ import { authRoute } from "@backend/api/auth";
 import { createElysia } from "@backend/api/elysia";
 import { eventsRoute } from "@backend/api/events";
 import { userRoute } from "@backend/api/user";
-import { cron } from "@elysiajs/cron";
-import { logger } from "@bogeychan/elysia-logger";
+
 import { restaurantsRoute } from "@backend/api/restaurants";
 import { fetchKitchenRoute } from "@backend/api/fetch-kitchen";
 import { menusRoute } from "@backend/api/menus";
+import { uploadRoute } from "@backend/api/upload";
 
 /**
  * Main API router
@@ -19,7 +19,8 @@ const app = createElysia({ prefix: "/api" })
   .use(eventsRoute)
   .use(restaurantsRoute)
   .use(menusRoute)
-  .use(fetchKitchenRoute);
+  .use(fetchKitchenRoute)
+  .use(uploadRoute);
 
 /**
  * Export the app type for use with RPC clients (e.g., edenTreaty)
